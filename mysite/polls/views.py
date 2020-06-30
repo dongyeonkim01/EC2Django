@@ -27,6 +27,6 @@ def pyang(requset):
                                    encoding='utf-8').split('\n')
 
 
-    os.system('pyang -f jstree -o {}.html {}'.format('/home/ec2-user/django/EC2Django/mysite/Files/result/out.html', ' '.join(file_list2)))
+    os.system('pyang -f jstree -o {}  {}'.format('/home/ec2-user/django/EC2Django/mysite/Files/result/out.html', ' '.join(file_list2)))
 
     return  render(requset,'polls/convert.html')
