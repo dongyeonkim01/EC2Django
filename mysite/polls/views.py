@@ -22,10 +22,11 @@ def upload(request):
         # data = str(os.system("python test.py"))
         # data = "D:\pro\python\djan\django1\mysite\Files"
         print('-------------------------')
-        lili = subprocess.run(['find /home/ec2-user/django/EC2Django/mysite/Files/data -mindepth 1'] ,shell=True ,check=True)
+        lili = subprocess.check_output(['find /home/ec2-user/django/EC2Django/mysite/Files/data -mindepth 1'] ,shell=True ,encoding='utf-8')
         # print(os.system('ls'))
+        print(type(lili))
         print('----------------------')
-        print(lili)
-        print(str(os.system('pwd')))
+
+
         # lili = os.listdir(data)
     return render(request,"polls/uploadResult.html" ,{"data":lili})
