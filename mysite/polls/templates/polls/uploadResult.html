@@ -1,20 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
+<div>TEST</div>
+<div>{{ data }}</div>
+{% if data %}
 
-</head>
+    <ul>
+        {% for i in data %}
+            <li>{{i}}</li>
+    </ul>
+        {% endfor %}
+{% endif %}
 
-<body>
-    <div>TEST</div>
-    <div>{{ data }}</div>
-    {% if data %}
-        <form action="" method="post">
-            {% for i in data %}
-                <div><input type="submit" value="{{i}}"></div>
-        </form>
-            {% endfor %}
-    {% endif %}
+<div>
+    <form action="" method="post">
+        <input type="submit" value="확인">
+    </form>
 
-</body>
-</html>
+</div>

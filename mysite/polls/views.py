@@ -1,10 +1,8 @@
 from django.shortcuts import render
 from django.http  import HttpResponse, Http404
 
-import sys
-import os
 import subprocess
-
+import os
 
 def main(request):
     return render(request,"polls/main.html")
@@ -19,14 +17,16 @@ def upload(request):
                 for chunk in f.chunks():
                     destination.write(chunk)
         process(x)
-        # data = str(os.system("python test.py"))
-        # data = "D:\pro\python\djan\django1\mysite\Files"
-        print('-------------------------')
-        lili = subprocess.check_output(['find /home/ec2-user/django/EC2Django/mysite/Files/data -mindepth 1'] ,shell=True ,encoding='utf-8')
-        # print(os.system('ls'))
-        print(type(lili))
-        print('----------------------')
-        lili = lili.split('\n')
 
-        # lili = os.listdir(data)
-    return render(request,"polls/uploadResult.html" ,{"data":lili})
+        file_list = subprocess.check_output(['find /home/ec2-user/django/EC2Django/mysite/Files/data -mindepth 1'] ,shell=True ,encoding='utf-8')
+        file_list = file_list.split('\n')
+    return render(request,"polls/uploadResult.html" ,{"data":file_list})
+
+def pyang(requset):
+    file_list = subprocess.check_output(['find /home/ec2-user/django/EC2Django/mysite/Files/data -mindepth 1'], shell=True,
+                                   encoding='utf-8')
+
+
+    os.system('pyang -f jstree -o {}.html {}'.format('/home/ec2-user/django/EC2Django/mysite/Files/result/out.html', ' '.join(file_list)))
+
+    return  render(requset,'polls/convert.html')
