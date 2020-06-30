@@ -23,10 +23,10 @@ def upload(request):
     return render(request,"polls/uploadResult.html" ,{"data":file_list})
 
 def pyang(requset):
-    file_list = subprocess.check_output(['find /home/ec2-user/django/EC2Django/mysite/Files/data -mindepth 1'], shell=True,
+    file_list2 = subprocess.check_output(['find /home/ec2-user/django/EC2Django/mysite/Files/data -mindepth 1'], shell=True,
                                    encoding='utf-8').split('\n')
 
 
-    os.system('pyang -f jstree -o {}.html {}'.format('/home/ec2-user/django/EC2Django/mysite/Files/result/out.html', ' '.join(file_list)))
+    os.system('pyang -f jstree -o {}.html {}'.format('/home/ec2-user/django/EC2Django/mysite/Files/result/out.html', ' '.join(file_list2)))
 
     return  render(requset,'polls/convert.html')
