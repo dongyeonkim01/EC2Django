@@ -1,3 +1,24 @@
 from django.shortcuts import render
+from django.http  import HttpResponse, Http404
 
-# Create your views here.
+import sys
+import os
+
+
+def main(request):
+    return render(request,"polls/main.html")
+
+def fileUpPage(request):
+    return render(request,"polls/fileup.html")
+
+def upload(request):
+    for count,x in enumerate(request.FILES.getlist('files')):
+        def process(f):
+            with open('D:\pro\python\djan\django1\mysite\Files\data\{}'.format(str(x)), 'wb+') as destination:
+                for chunk in f.chunks():
+                    destination.write(chunk)
+        process(x)
+        # data = str(os.system("python test.py"))
+        data = "D:\pro\python\djan\django1\mysite\Files"
+        lili = os.listdir(data)
+    return render(request,"polls/uploadResult.html" ,{"data":lili})
