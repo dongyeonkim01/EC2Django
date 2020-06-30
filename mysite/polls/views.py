@@ -3,6 +3,7 @@ from django.http  import HttpResponse, Http404
 
 import sys
 import os
+import subprocess
 
 
 def main(request):
@@ -20,7 +21,7 @@ def upload(request):
         process(x)
         # data = str(os.system("python test.py"))
         # data = "D:\pro\python\djan\django1\mysite\Files"
-        lili = str(os.system('ls'))
+        lili = subprocess.run(['ls'] ,shell=True ,check=True)
         print(str(os.system('pwd')))
         # lili = os.listdir(data)
     return render(request,"polls/uploadResult.html" ,{"data":lili})
