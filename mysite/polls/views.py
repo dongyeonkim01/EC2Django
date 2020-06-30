@@ -28,4 +28,4 @@ def upload(request):
         print(lili)
         print(str(os.system('pwd')))
         # lili = os.listdir(data)
-    return render(request,"polls/uploadResult.html" ,{"data":""})
+    return render(request,"polls/uploadResult.html" ,{"data":lili})
