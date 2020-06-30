@@ -23,17 +23,17 @@ class Pharser():
 
 if __name__ == "__main__":
     data = ''
-    for i in range(len(sys.argv)-1):
-        data = data + ' ' + sys.argv[i+1]
-
-    one = YangRegex.regexClass('test.yang')
-    dic1 = one.leaf_dicOut()
-
-
-    outfin = Pharser("out.html")
-    kk = outfin.finalFile(dic1)
-    with open('ts.html','w') as f2:
-        f2.write(kk)
+    # for i in range(len(sys.argv)-1):
+    #     data = data + ' ' + sys.argv[i+1]
+    #
+    # one = YangRegex.regexClass('test.yang')
+    # dic1 = one.leaf_dicOut()
+    #
+    #
+    # outfin = Pharser("out.html")
+    # kk = outfin.finalFile(dic1)
+    # with open('ts.html','w') as f2:
+    #     f2.write(kk)
 
 
 
