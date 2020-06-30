@@ -22,6 +22,7 @@ def upload(request):
         # data = str(os.system("python test.py"))
         # data = "D:\pro\python\djan\django1\mysite\Files"
         lili = subprocess.run(['ls'] ,shell=True ,check=True)
+        print(lili)
         print(str(os.system('pwd')))
         # lili = os.listdir(data)
-    return render(request,"polls/uploadResult.html" ,{"data":lili})
+    return render(request,"polls/uploadResult.html" ,{"data":""})
