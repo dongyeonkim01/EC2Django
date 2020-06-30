@@ -19,6 +19,8 @@ def upload(request):
                     destination.write(chunk)
         process(x)
         # data = str(os.system("python test.py"))
-        data = "D:\pro\python\djan\django1\mysite\Files"
-        lili = os.listdir(data)
+        # data = "D:\pro\python\djan\django1\mysite\Files"
+        lili = str(os.system('ls'))
+        print(str(os.system('pwd')))
+        # lili = os.listdir(data)
     return render(request,"polls/uploadResult.html" ,{"data":lili})
