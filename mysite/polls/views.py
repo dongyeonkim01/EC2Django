@@ -26,7 +26,7 @@ def upload(request):
         # print(os.system('ls'))
         print(type(lili))
         print('----------------------')
-
+        lili = lili.split('\n')
 
         # lili = os.listdir(data)
     return render(request,"polls/uploadResult.html" ,{"data":lili})
