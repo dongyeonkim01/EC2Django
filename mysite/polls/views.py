@@ -14,7 +14,7 @@ def fileUpPage(request):
 def upload(request):
     for count,x in enumerate(request.FILES.getlist('files')):
         def process(f):
-            with open('/home/ec2-user/django/EC2Django/mysite/{}'.format(str(x)), 'wb+') as destination:
+            with open('/home/ec2-user/django/EC2Django/mysite/Files/data/{}'.format(str(x)), 'wb+') as destination:
                 for chunk in f.chunks():
                     destination.write(chunk)
         process(x)
