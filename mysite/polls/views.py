@@ -21,7 +21,10 @@ def upload(request):
         process(x)
         # data = str(os.system("python test.py"))
         # data = "D:\pro\python\djan\django1\mysite\Files"
-        lili = subprocess.run(['ls'] ,shell=True ,check=True)
+        print('-------------------------')
+        lili = subprocess.run(['find /home/ec2-user/django/EC2Django/mysite/Files/data -mindepth 1'] ,shell=True ,check=True)
+        # print(os.system('ls'))
+        print('----------------------')
         print(lili)
         print(str(os.system('pwd')))
         # lili = os.listdir(data)

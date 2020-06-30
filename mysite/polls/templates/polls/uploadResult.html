@@ -10,10 +10,10 @@
     <div>{{ data }}</div>
     {% if data %}
         <form action="" method="post">
-            {% for i in data %}
+            {{ data }}
                 <div><input type="submit" value="{{i}}"></div>
         </form>
-            {% endfor %}
+
     {% endif %}
 
 </body>
