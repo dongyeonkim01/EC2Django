@@ -1,6 +1,9 @@
 from django.shortcuts import render
 from django.http  import HttpResponse, Http404
-
+import sys
+sys.path.append('D:\pro\python\djan\EC2Django\mysite\polls')
+import yangConverter
+import YangRegex
 import subprocess
 import os
 
@@ -32,15 +35,20 @@ def convert(requset):
                                    encoding='utf-8').split('\n')
 
 
+
     return  render(requset,'polls/convert.html')
 
 def test(requset):
     # file_list2 = subprocess.check_output(['dir   D:\pro\python\djan\EC2Django\mysite\Files\data'],
     #                                      shell=True,encoding='utf-8')
-    file_list2 = subprocess.check_output(['dir '],
-                                         shell=True, stderr=subprocess.STDOUT)
-    print(file_list2)
+    # file_list2 = subprocess.check_output(['dir '],
+    #                                      shell=True, stderr=subprocess.STDOUT)
 
-
+    A = YangRegex.regexClass('D:\pro\python\djan\EC2Django\mysite\Files\data2\\test.yang')
+    dic = A.leaf_dicOut()
+    B = yangConverter.Pharser('D:\pro\python\djan\EC2Django\mysite\Files\\result\out1.html')
+    out = B.finalFile(dic)
+    with open('test.html','w') as f3:
+        f3.write(out)
     data = ' '
-    return render(requset,'polls/test.html', {"data":data})
+    return render(requset,'polls/test.html', {"data":out})

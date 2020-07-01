@@ -1,4 +1,5 @@
 import re
+import json
 class regexClass():
 
     def __init__(self,data):
@@ -150,6 +151,7 @@ class regexClass():
 
     def test(self,dic):
         out_html = ''
+        json_data = json.dumps(dic)
         with open(self.data,'r') as f1:
             html = f1.readlines()
 
@@ -173,15 +175,53 @@ class regexClass():
                 for ind,val in enumerate(lli):
                     if '">' in val:
                         ind2 = ind
-                edit = ' '.join(lli[:ind2+1]) +' <em onclick="jq()">' +lli[-2]  +'</em></abbr>'
+                edit = ' '.join(lli[:ind2+1]) +'<em onclick="'+"jq('"+ lli[-2]+"'"+')">' +lli[-2]  +'</em></abbr>'
                 i = edit
                 text2 = ''
+
+            if '<body' in i:
+                i = i + ' \n <div class="div-right" style="width: 0%; float: right; "></div>' \
+                        ' <div class="div-left" style="width: 100%; float: left; overflow: scroll;">'
+
+            if '</body>' in i:
+                i = '''
+                    </div>
+                    
+                    </body>
+                    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+                    <script>
+                        function jq(text){
+                            console.log(text);
+                          $(document).ready(function(){
+                                $('.div-right').css('width','25%');
+                                $('.div-left').css('width','75%');
+                                $('.div-right *').remove();
+                                $('.div-right').append('<div style="height:105px;"></div><div style="white-space: pre;">'+dicval[text]+'</div >');
+                          });
+                        }
+                    </script>    
+                    <script>                    
+                ''' + 'var dicval = '+json_data + '; </script>'
+
+
             out_html += i
 
         return out_html
 
 if __name__ == "__main__":
     datass = ''
+    A = regexClass('D:\pro\python\djan\EC2Django\mysite\Files\data2\\test.yang')
+    dic = A.leaf_dicOut()
+    B = regexClass('D:\pro\python\djan\EC2Django\mysite\Files\\result\out1.html')
+    out = B.test(dic)
+
+    with open('testx.html' , 'w') as f:
+        f.write(out)
+
+
+    # B = yangConverter.Pharser('D:\pro\python\djan\EC2Django\mysite\Files\\result\out1.html')
+
+
     # A = regexClass('test.yang')
     # tex = str(A.leaf_dicOut())
     # dic = A.leaf_dicOut()
