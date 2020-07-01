@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.http  import HttpResponse, Http404
 
+import sys
+sys.path.append('/home/ec2-user/django/EC2Django/mysite/polls')
 import subprocess
 import yangConverter
 import YangRegex
