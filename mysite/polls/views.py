@@ -63,6 +63,7 @@ def test(request):
                                         shell=True, encoding='utf-8')
     file_list = file_list.split('\n')
 
+
     total_Yang = ''
     for file in file_list:
 
