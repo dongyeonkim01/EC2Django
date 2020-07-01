@@ -28,3 +28,14 @@ def convert(requset):
     os.system('pyang -f jstree -o {}  {}'.format('/home/ec2-user/django/EC2Django/mysite/Files/result/out.html', ' '.join(file_list2)))
 
     return  render(requset,'polls/convert.html')
+
+def test(requset):
+    # file_list2 = subprocess.check_output(['dir   D:\pro\python\djan\EC2Django\mysite\Files\data'],
+    #                                      shell=True,encoding='utf-8')
+    file_list2 = subprocess.check_output(['dir '],
+                                         shell=True, stderr=subprocess.STDOUT)
+    print(file_list2)
+
+
+    data = ' '
+    return render(requset,'polls/test.html', {"data":data})
