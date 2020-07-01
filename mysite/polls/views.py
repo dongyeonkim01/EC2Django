@@ -68,6 +68,11 @@ def test(request):
     print(file_list)
     print('--------------------------------')
     total_Yang = ''
+    with open('/home/ec2-user/django/EC2Django/mysite/Files/data/ietf-hardware.yang' ,'r') as fa:
+        data =fa.readlines()
+    print(data)
+
+    print('--------------------------------------')
     for file in file_list:
         # print(file)
         kk = ''
