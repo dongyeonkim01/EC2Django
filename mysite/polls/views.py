@@ -56,3 +56,24 @@ def convert(requset):
 
 
     return  render(requset,'polls/convert.html')
+
+
+def test(request):
+    file_list = subprocess.check_output(['find /home/ec2-user/django/EC2Django/mysite/Files/data -mindepth 1'],
+                                        shell=True, encoding='utf-8')
+    file_list = file_list.split('\n')
+
+    total_Yang = ''
+    for file in file_list:
+
+        kk = ''
+        try:
+            with open(file, 'r') as ff:
+                kk += ff.readlines()
+            total_Yang += ''.join(kk)
+        except:
+            pass
+    with open('tmp.yang', 'w') as ft:
+        ft.write(total_Yang)
+
+    return  HttpResponse("teststst")
