@@ -69,14 +69,16 @@ def test(request):
     print('--------------------------------')
     total_Yang = ''
     for file in file_list:
-        print(file)
+        # print(file)
         kk = ''
         try:
             with open(file, 'r') as ff:
                 kk += ff.readlines()
+            print(kk)
             total_Yang += ''.join(kk)
         except:
             pass
+
     with open('tmp.yang', 'w') as ft:
         ft.write(total_Yang)
 
