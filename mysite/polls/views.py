@@ -68,19 +68,16 @@ def test(request):
     print(file_list)
     print('--------------------------------')
     total_Yang = ''
-    with open('/home/ec2-user/django/EC2Django/mysite/Files/data/ietf-hardware.yang' ,'r') as fa:
-        data =fa.readlines()
-    print(data)
-
+    # with open('/home/ec2-user/django/EC2Django/mysite/Files/data/ietf-hardware.yang' ,'r') as fa:
+    #     data =fa.readlines()
+    # print(data)
     print('--------------------------------------')
     for file in file_list:
         # print(file)
-        kk = ''
         try:
-            with open(file, 'r') as ff:
-                kk += ff.readlines()
-            print(kk)
-            total_Yang += ''.join(kk)
+            with open(file.replace(' ',''), 'r') as ff:
+                kk = ff.readlines()
+            total_Yang += '\n'.join(kk)
         except:
             pass
             print('error')
