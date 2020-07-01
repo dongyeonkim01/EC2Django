@@ -78,6 +78,7 @@ def test(request):
             total_Yang += ''.join(kk)
         except:
             pass
+            print('error')
 
     with open('tmp.yang', 'w') as ft:
         ft.write(total_Yang)
