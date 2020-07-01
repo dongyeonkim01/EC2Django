@@ -65,10 +65,11 @@ def test(request):
                                         shell=True, encoding='utf-8')
     file_list = file_list.split('\n')
 
-
+    print(file_list)
+    print('--------------------------------')
     total_Yang = ''
     for file in file_list:
-
+        print(file)
         kk = ''
         try:
             with open(file, 'r') as ff:
