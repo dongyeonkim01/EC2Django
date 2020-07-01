@@ -20,12 +20,17 @@ def upload(request):
 
         file_list = subprocess.check_output(['find /home/ec2-user/django/EC2Django/mysite/Files/data -mindepth 1'] ,shell=True ,encoding='utf-8')
         file_list = file_list.split('\n')
+
+        os.system('pyang -f jstree -o {}  {}'.format('/home/ec2-user/django/EC2Django/mysite/Files/result/out.html',
+                                                     ' '.join(file_list)))
+
+
     return render(request,"polls/uploadResult.html" ,{"data":file_list})
 
 def convert(requset):
     file_list2 = subprocess.check_output(['find /home/ec2-user/django/EC2Django/mysite/Files/data -mindepth 1'], shell=True,
                                    encoding='utf-8').split('\n')
-    os.system('pyang -f jstree -o {}  {}'.format('/home/ec2-user/django/EC2Django/mysite/Files/result/out.html', ' '.join(file_list2)))
+
 
     return  render(requset,'polls/convert.html')
 
