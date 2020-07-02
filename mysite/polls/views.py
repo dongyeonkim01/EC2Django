@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http  import HttpResponse, Http404
-
+import  time
 import sys
 sys.path.append('/home/ec2-user/django/EC2Django/mysite/polls')
 import subprocess
@@ -37,7 +37,7 @@ def upload(request):
     with open('tmp.yang','w') as ft:
         ft.write(total_Yang)
 
-
+    time.sleep(3)
 
     os.system('pyang -f jstree -o {}  {}'.format('/home/ec2-user/django/EC2Django/mysite/Files/result/out.html'
                                            , ' '.join(file_list)))
@@ -47,8 +47,10 @@ def upload(request):
     B = yangConverter.Pharser('/home/ec2-user/django/EC2Django/mysite/Files/result/out.html')
     out = B.finalFile(dic)
 
+    print(len(out),'tpye : ',type(out))
     with open('/home/ec2-user/django/EC2Django/mysite/Files/result/{}.html'.format('ttt1'), 'w') as fi:
         fi.write(out)
+    print('-----------------------------')
 
     return render(request,"polls/uploadResult.html" ,{"data":file_list})
 
