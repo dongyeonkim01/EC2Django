@@ -26,6 +26,10 @@ def upload(request):
     file_list = file_list.split('\n')
 
     total_Yang = ''
+    print()
+    print()
+    print()
+    print('----------------------------------')
     print(file_list,'///',type(file_list))
     for file in file_list:
         kk = ''
