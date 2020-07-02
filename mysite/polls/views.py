@@ -37,7 +37,7 @@ def upload(request):
             print('file name : ',file)
             with open(str(file.replace(' ','')) ,'r') as ff:
                 print('reads111')
-                kk += ff.readlines()
+                kk = ff.readlines()
             total_Yang += '\n'.join(kk)
         except:
             print('error read file')
