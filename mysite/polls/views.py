@@ -26,20 +26,19 @@ def upload(request):
     file_list = file_list.split('\n')
 
     total_Yang = ''
-    print(file_list)
+    print(file_list,'///',type(file_list))
     for file in file_list:
         kk = ''
         try:
-            print(file)
+            print('file name : ',file)
             with open(file.replace(' ','') ,'r') as ff:
                 kk += ff.readlines()
             total_Yang += '\n'.join(kk)
         except:
-            print('error')
+            print('error read file')
             pass
     with open('tmp.yang','w') as ft:
         ft.write(total_Yang)
-
 
 
     os.system('pyang -f jstree -o {}  {}'.format('/home/ec2-user/django/EC2Django/mysite/Files/result/out.html'
