@@ -30,6 +30,7 @@ def upload(request):
     for file in file_list:
         kk = ''
         try:
+            print(file)
             with open(file.replace(' ','') ,'r') as ff:
                 kk += ff.readlines()
             total_Yang += '\n'.join(kk)
@@ -39,10 +40,11 @@ def upload(request):
     with open('tmp.yang','w') as ft:
         ft.write(total_Yang)
 
-    time.sleep(3)
+
 
     os.system('pyang -f jstree -o {}  {}'.format('/home/ec2-user/django/EC2Django/mysite/Files/result/out.html'
                                            , ' '.join(file_list)))
+    time.sleep(2)
 
     A = YangRegex.regexClass('tmp.yang')
     dic = A.leaf_dicOut()
