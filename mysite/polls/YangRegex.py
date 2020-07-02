@@ -120,7 +120,18 @@ class regexClass():
                 if cc ==0:
                     bb = False
                     k,v = self.leaf_reg(tt)
-                    dic[k] = v
+                    k = k + '-1'
+                    if k in dic.keys():
+                        while True:
+                            tmp = k.split('-')
+                            tmp[-1] = str(int(tmp[-1]) + 1)
+                            k = '-'.join(tmp)
+                            if k not in dic.keys():
+                                break
+
+                        dic['-'.join(tmp)] = v
+                    else:
+                        dic[k] = v
                     tt = ''
 
         # for kkk in dic.keys():
@@ -129,6 +140,7 @@ class regexClass():
 
 
     def final_config(self,dic):
+        key_list = []
         out_html = ''
         json_data = json.dumps(dic)
         with open(self.data, 'r') as f1:
@@ -151,14 +163,30 @@ class regexClass():
                 for ind, val in enumerate(lli):
                     if '">' in val:
                         ind2 = ind
-                edit = ' '.join(lli[:ind2 + 1]) + '<em onclick="' + "jq('" + lli[-2] + "'" + ')">' + lli[
-                    -2] + '</em></abbr>'
+
+                keys = lli[-2] + '-1'
+                if keys in key_list:
+                    while True:
+                        tmp = keys.split('-')
+                        tmp[-1] = str(int(tmp[-1]) + 1)
+                        keys = '-'.join(tmp)
+                        if keys not in key_list:
+                            break
+                    edit = ' '.join(
+                        lli[:ind2 + 1]) + '<em id="' + keys + '"' + 'onclick="' + "jq('" + keys + "'" + ')">' + lli[
+                               -2] + '</em></abbr>'
+                    key_list.append(keys)
+                else:
+                    edit = ' '.join(
+                        lli[:ind2 + 1]) + '<em id="' + keys + '"' + 'onclick="' + "jq('" + keys + "'" + ')">' + lli[
+                               -2] + '</em></abbr>'
+                    key_list.append(keys)
                 i = edit
                 text2 = ''
 
             if '<body' in i:
                 i = i + ' \n <div class="div-right" style="width: 0%; float: right; "></div>' \
-                        ' <div class="div-left" style="width: 100%; float: left; overflow: scroll;">'
+                        ' <div class="div-left" style="width: 100%; height:100%; float: left; overflow: scroll;">'
 
             if '</body>' in i:
                 i = '''
@@ -169,8 +197,8 @@ class regexClass():
                                 function jq(text){
                                     console.log(text);
                                   $(document).ready(function(){
-                                        $('.div-right').css('width','25%');
-                                        $('.div-left').css('width','75%');
+                                        $('.div-right').css('width','35%');
+                                        $('.div-left').css('width','65%');
                                         $('.div-right *').remove();
                                         $('.div-right').append('<div style="height:105px;"></div><div style="white-space: pre;">'+dicval[text]+'</div >');
                                   });
