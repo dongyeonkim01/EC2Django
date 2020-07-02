@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http  import HttpResponse, Http404
-
+import  time
 import sys
 sys.path.append('/home/ec2-user/django/EC2Django/mysite/polls')
 import subprocess
@@ -26,18 +26,20 @@ def upload(request):
     file_list = file_list.split('\n')
 
     total_Yang = ''
+    print(file_list)
     for file in file_list:
         kk = ''
         try:
-            with open(file ,'r') as ff:
+            with open(file.replace(' ','') ,'r') as ff:
                 kk += ff.readlines()
-            total_Yang += kk
+            total_Yang += '\n'.join(kk)
         except:
+            print('error')
             pass
     with open('tmp.yang','w') as ft:
         ft.write(total_Yang)
 
-
+    time.sleep(3)
 
     os.system('pyang -f jstree -o {}  {}'.format('/home/ec2-user/django/EC2Django/mysite/Files/result/out.html'
                                            , ' '.join(file_list)))
@@ -47,15 +49,18 @@ def upload(request):
     B = yangConverter.Pharser('/home/ec2-user/django/EC2Django/mysite/Files/result/out.html')
     out = B.finalFile(dic)
 
+
     with open('/home/ec2-user/django/EC2Django/mysite/Files/result/{}.html'.format('ttt1'), 'w') as fi:
         fi.write(out)
+    print('-----------------------------')
 
     return render(request,"polls/uploadResult.html" ,{"data":file_list})
 
 def convert(requset):
     file_list2 = subprocess.check_output(['find /home/ec2-user/django/EC2Django/mysite/Files/data -mindepth 1'], shell=True,
                                    encoding='utf-8').split('\n')
-
+    os.system('rm /home/ec2-user/django/EC2Django/mysite/Files/result/out.html')
+    # os.system('rm /home/ec2-user/django/EC2Django/mysite/Files/tmp.yang')
     for i in file_list2:
         try:
             os.system('rm {}'.format(i.replace(' ','')))
