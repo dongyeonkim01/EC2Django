@@ -85,4 +85,12 @@ def test(request):
     with open('tmp.yang', 'w') as ft:
         ft.write(total_Yang)
 
+    A = YangRegex.regexClass('tmp.yang')
+    dic = A.leaf_dicOut()
+    B = yangConverter.Pharser('/home/ec2-user/django/EC2Django/mysite/Files/result/out.html')
+    out = B.finalFile(dic)
+
+    with open('{}.html'.format('ttest'), 'w') as fi:
+        fi.write(out)
+
     return  HttpResponse("teststst")
