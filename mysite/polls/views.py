@@ -32,7 +32,7 @@ def upload(request):
     print('----------------------------------')
     print(file_list,'///',type(file_list))
     for file in file_list:
-        kk = ''
+
         try:
             print('file name : ',file)
             with open(str(file.replace(' ','')) ,'r') as ff:
