@@ -57,7 +57,10 @@ def convert(requset):
                                    encoding='utf-8').split('\n')
 
     for i in file_list2:
-        os.system('rm {}'.format(i.replace(' ','')))
+        try:
+            os.system('rm {}'.format(i.replace(' ','')))
+        except:
+            print('error file rm error')
 
     os.system('mv /home/ec2-user/django/EC2Django/mysite/Files/result/ttt1.html   /home/ec2-user/data')
     return  render(requset,'polls/convert.html')
