@@ -12,7 +12,7 @@ class Pharser():
 
     def finalFile(self,dic):
         File2 = YangRegex.regexClass(self.data)
-        outfile = File2.test(dic)
+        outfile = File2.final_config(dic)
         # with open('./result/files.html','w') as f2:
         #     f2.write(outfile)
         return outfile

@@ -129,23 +129,57 @@ class regexClass():
 
 
     def final_config(self,dic):
-        html_text,out_html = '',''
+        out_html = ''
+        json_data = json.dumps(dic)
         with open(self.data, 'r') as f1:
-            text = f1.readlines()
-        html_text = '\n'.join(text)
+            html = f1.readlines()
         patten = re.compile('\S+', re.M)
-        for i in text:
+        bool = False
+        text2 = ''
+        for i in html:
+            if 'class="leaf"' in i or 'class="leaf-list' in i:
+                bool = True
+            if bool:
+                text2 = text2 + ' ' + i
 
-            if '<em>' in i:
-                lli = patten.findall(i)
-                bool =False
-                ins = 0
-                for ind,val in enumerate(lli):
-                    if val=='<em>':
-                        ins = ind
-                lli[ins] = '<em  onclick=" ' + " jq(' " + str(dic[lli[ins+1]]).replace("\n",'').replace('"','') + " ' )" + ' " >'
-                i = ''.join(lli)
+            if '</abbr>' in i and bool:
+                text2 = text2.split('\n')[1:]
+                text2 = '\n'.join(text2)
+                bool = False
+                lli = patten.findall(text2.replace('\n', ' '))
+                ind2 = 0
+                for ind, val in enumerate(lli):
+                    if '">' in val:
+                        ind2 = ind
+                edit = ' '.join(lli[:ind2 + 1]) + '<em onclick="' + "jq('" + lli[-2] + "'" + ')">' + lli[
+                    -2] + '</em></abbr>'
+                i = edit
+                text2 = ''
+
+            if '<body' in i:
+                i = i + ' \n <div class="div-right" style="width: 0%; float: right; "></div>' \
+                        ' <div class="div-left" style="width: 100%; float: left; overflow: scroll;">'
+
+            if '</body>' in i:
+                i = '''
+                            </div>
+                            </body>
+                            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+                            <script>
+                                function jq(text){
+                                    console.log(text);
+                                  $(document).ready(function(){
+                                        $('.div-right').css('width','25%');
+                                        $('.div-left').css('width','75%');
+                                        $('.div-right *').remove();
+                                        $('.div-right').append('<div style="height:105px;"></div><div style="white-space: pre;">'+dicval[text]+'</div >');
+                                  });
+                                }
+                            </script>    
+                            <script>                    
+                        ''' + 'var dicval = ' + json_data + '; </script>'
             out_html += i
+
         return out_html
 
 
