@@ -47,7 +47,7 @@ def upload(request):
     B = yangConverter.Pharser('/home/ec2-user/django/EC2Django/mysite/Files/result/out.html')
     out = B.finalFile(dic)
 
-    with open('{}.html'.format('ttest'), 'w') as fi:
+    with open('/home/ec2-user/django/EC2Django/mysite/Files/result/{}.html'.format('ttt1'), 'w') as fi:
         fi.write(out)
 
     return render(request,"polls/uploadResult.html" ,{"data":file_list})
@@ -56,7 +56,13 @@ def convert(requset):
     file_list2 = subprocess.check_output(['find /home/ec2-user/django/EC2Django/mysite/Files/data -mindepth 1'], shell=True,
                                    encoding='utf-8').split('\n')
 
+    for i in file_list2:
+        try:
+            os.system('rm {}'.format(i.replace(' ','')))
+        except:
+            print('error file rm error')
 
+    os.system('mv /home/ec2-user/django/EC2Django/mysite/Files/result/ttt1.html   /home/ec2-user/data')
     return  render(requset,'polls/convert.html')
 
 

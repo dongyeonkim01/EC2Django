@@ -4,7 +4,6 @@ from . import views
 
 urlpatterns =[
     path('test',views.test,name='test'),
-
     path('',views.main,name='main'),
     path('fileUp',views.fileUpPage,name='fileUpload'),
     path('convert',views.convert,name='convert'),
