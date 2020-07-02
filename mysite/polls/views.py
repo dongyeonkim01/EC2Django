@@ -35,7 +35,8 @@ def upload(request):
         kk = ''
         try:
             print('file name : ',file)
-            with open(file.replace(' ','') ,'r') as ff:
+            with open(str(file.replace(' ','')) ,'r') as ff:
+                print('reads111')
                 kk += ff.readlines()
             total_Yang += '\n'.join(kk)
         except:
