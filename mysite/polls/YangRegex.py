@@ -277,8 +277,8 @@ if __name__ == "__main__":
     B = regexClass('D:\pro\python\djan\EC2Django\mysite\Files\\result\out1.html')
     out = B.test(dic)
 
-    with open('testx.html' , 'w') as f:
-        f.write(out)
+    # with open('testx.html' , 'w') as f:
+    #     f.write(out)
 
 
     # B = yangConverter.Pharser('D:\pro\python\djan\EC2Django\mysite\Files\\result\out1.html')
