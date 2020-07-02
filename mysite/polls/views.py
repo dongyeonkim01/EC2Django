@@ -26,13 +26,15 @@ def upload(request):
     file_list = file_list.split('\n')
 
     total_Yang = ''
+    print(file_list)
     for file in file_list:
         kk = ''
         try:
             with open(file.replace(' ','') ,'r') as ff:
                 kk += ff.readlines()
-            total_Yang += kk
+            total_Yang += '\n'.join(kk)
         except:
+            print('error')
             pass
     with open('tmp.yang','w') as ft:
         ft.write(total_Yang)
@@ -47,7 +49,7 @@ def upload(request):
     B = yangConverter.Pharser('/home/ec2-user/django/EC2Django/mysite/Files/result/out.html')
     out = B.finalFile(dic)
 
-    print(len(out),'tpye : ',type(out))
+
     with open('/home/ec2-user/django/EC2Django/mysite/Files/result/{}.html'.format('ttt1'), 'w') as fi:
         fi.write(out)
     print('-----------------------------')
@@ -58,7 +60,7 @@ def convert(requset):
     file_list2 = subprocess.check_output(['find /home/ec2-user/django/EC2Django/mysite/Files/data -mindepth 1'], shell=True,
                                    encoding='utf-8').split('\n')
     os.system('rm /home/ec2-user/django/EC2Django/mysite/Files/result/out.html')
-    os.system('rm /home/ec2-user/django/EC2Django/mysite/Files/tmp.yang')
+    # os.system('rm /home/ec2-user/django/EC2Django/mysite/Files/tmp.yang')
     for i in file_list2:
         try:
             os.system('rm {}'.format(i.replace(' ','')))
