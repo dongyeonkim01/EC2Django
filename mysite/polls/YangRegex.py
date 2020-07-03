@@ -43,32 +43,6 @@ class regexClass():
                     tmp_kes = inner
         return key, val
 
-    def container_dicOut(self):
-        dic = {}
-        tt = ''
-        cc = 0
-        bb = False
-        data = self.openFile()
-        for i in data.split('\n'):
-            if 'container' in i :
-                bb = True
-
-            if bb:
-                tt = tt + '\n' + i
-                if '{' in i:
-                    cc += 1
-                if '}' in i:
-                    cc -= 1
-                if cc ==0:
-                    bb = False
-                    k,v = self.container_reg(tt)
-                    dic[k] = v
-                    tt = ''
-
-        for kkk in dic.keys():
-            print('key : ',kkk,' /// val::',dic[kkk])
-        return dic
-
 
     def leaf_reg(self,text):
         patten      = re.compile('\S+', re.M)
@@ -100,6 +74,32 @@ class regexClass():
                             return False
                     tmp_kes = inner
         return key, val
+
+    def container_dicOut(self):
+        dic = {}
+        tt = ''
+        cc = 0
+        bb = False
+        data = self.openFile()
+        for i in data.split('\n'):
+            if 'container' in i :
+                bb = True
+
+            if bb:
+                tt = tt + '\n' + i
+                if '{' in i:
+                    cc += 1
+                if '}' in i:
+                    cc -= 1
+                if cc ==0:
+                    bb = False
+                    k,v = self.container_reg(tt)
+                    dic[k] = v
+                    tt = ''
+
+        for kkk in dic.keys():
+            print('key : ',kkk,' /// val::',dic[kkk])
+        return dic
 
     def leaf_dicOut(self):
         dic = {}
