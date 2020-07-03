@@ -1,8 +1,41 @@
-<form method="post" action="/upload/" enctype="multipart/form-data">
-    {% csrf_token %}
-    <input type="file" name="files" multiple>
-    <input type="submit" value="upload">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <div class="jumbotron">
+        <h1>Yang Viewer </h1>
+        <p>Test Page Yang Viewer </p>
+    </div>
+    <div>
+        <h3>파일 업로드</h3>
+        <p>사용할 Yang Data를 업로드 합니다. (yang 확장자 data만 사용 가능)</p>
+    </div>
+    <div style="height:20px;"></div>
+    <form method="post" action="/upload/" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div style="height:150px;">
+            <input type="file" name="files" multiple >
+        </div>
+
+        <div style="width:100%;background-color:#EEEEEE;height:150px;  margin: 0 auto;" >
+            <input style="width:95%;background-color:#A3A2A2;height:100px;margin:2.5%;
+            " type="submit" value="upload">
+        </div>
+    </form>
 
 
+</div>
 
-</form>
+</body>
+</html>
+
+
