@@ -15,6 +15,7 @@ def fileUpPage(request):
     return render(request,"polls/fileup.html")
 
 def upload(request):
+    filename ='view'
     for count,x in enumerate(request.FILES.getlist('files')):
         def process(f):
             with open('/home/ec2-user/django/EC2Django/mysite/Files/data/{}'.format(str(x)), 'wb+') as destination:
@@ -32,7 +33,8 @@ def upload(request):
     print('----------------------------------')
     print('file up load/converting')
     for file in file_list:
-
+        name1 = file.split('/')
+        filename+='-'+name1[-1].split('.')[0]
         try:
             with open(str(file.replace(' ','')) ,'r') as ff:
                 kk = ff.readlines()
@@ -53,9 +55,13 @@ def upload(request):
     out = B.finalFile(dic)
 
 
-    with open('/home/ec2-user/django/EC2Django/mysite/Files/result/{}.html'.format('ttt1'), 'w') as fi:
+    with open('/home/ec2-user/django/EC2Django/mysite/Files/result/{}.html'.format(filename), 'w') as fi:
         fi.write(out)
+
+    os.system('mv  /home/ec2-user/django/EC2Django/mysite/Files/result/{}.html   /home/ec2-user/data'.format(filename))
     print('-----------------------------')
+
+
 
     return render(request,"polls/uploadResult.html" ,{"data":file_list})
 
