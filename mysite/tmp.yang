@@ -1,0 +1,7417 @@
+module o-ran-interfaces {
+
+  yang-version 1.1;
+
+  namespace "urn:o-ran:interfaces:1.0";
+
+  prefix "o-ran-int";
+
+
+
+
+
+  import ietf-inet-types {
+
+    prefix "inet";
+
+  }
+
+
+
+  import iana-if-type {
+
+    prefix "ianaift";
+
+  }
+
+
+
+  import ietf-interfaces {
+
+    prefix "if";
+
+  }
+
+
+
+  import ietf-ip {
+
+    prefix "ip";
+
+  }
+
+
+
+  import ietf-hardware {
+
+    prefix "hw";
+
+  }
+
+
+
+  import ietf-yang-types {
+
+    prefix "yang";
+
+  }
+
+
+
+  import iana-hardware {
+
+    prefix "ianahw";
+
+  }
+
+
+
+  organization "O-RAN Alliance";
+
+
+
+  contact
+
+    "www.o-ran.org";
+
+
+
+  description
+
+    "This module defines the YANG definitions for managng the O-RAN
+
+     interfaces.
+
+
+
+    Copyright 2020 the O-RAN Alliance.
+
+
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS'
+
+    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+
+    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+
+    ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+
+    LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+
+    CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+
+    SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+
+    INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+
+    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+
+    POSSIBILITY OF SUCH DAMAGE.
+
+
+
+    Redistribution and use in source and binary forms, with or without
+
+    modification, are permitted provided that the following conditions are met:
+
+
+
+    * Redistributions of source code must retain the above copyright notice,
+
+    this list of conditions and the above disclaimer.
+
+    * Redistributions in binary form must reproduce the above copyright notice,
+
+    this list of conditions and the above disclaimer in the documentation
+
+    and/or other materials provided with the distribution.
+
+    * Neither the Members of the O-RAN Alliance nor the names of its
+
+    contributors may be used to endorse or promote products derived from
+
+    this software without specific prior written permission.";
+
+
+
+  revision "2020-04-17" {
+
+    description
+
+      "version 1.2.0
+
+
+
+      1) updated descriptions to clarify operation when vlan-tagging is false";
+
+
+
+    reference "ORAN-WG4.M.0-v03.00";
+
+  }
+
+  revision "2019-07-03" {
+
+    description
+
+      "version 1.1.0
+
+
+
+      1) increasing max elements for user plane DSCP markings to 64
+
+      2) re-organizing layout to facilitate cross-WG adoption, whilst ensuring
+
+      nodes are syntactically and semantically equivalent";
+
+
+
+    reference "ORAN-WG4.M.0-v01.00";
+
+  }
+
+
+
+  revision "2019-02-04" {
+
+    description
+
+      "version 1.0.0
+
+
+
+      1) imported model from xRAN
+
+      2) changed namespace and reference from xran to o-ran";
+
+
+
+    reference "ORAN-WG4.M.0-v01.00";
+
+  }
+
+
+
+  feature UDPIP-BASED-CU-PLANE {
+
+    description
+
+      "This feature indicates that the RU supports the UDP/IP based transport
+
+      for the CU plane.";
+
+  }
+
+
+
+  feature ALIASMAC-BASED-CU-PLANE {
+
+    description
+
+      "This feature indicates that the RU supports the alias MAC address
+
+       based transport for the CU plane.";
+
+  }
+
+
+
+
+
+  typedef pcp {
+
+    type uint8 {
+
+      range "0..7";
+
+    }
+
+    description
+
+      "Priority Code Point. PCP is a 3-bit field that refers to the
+
+      class of service applied to a VLAN tagged frame.  The
+
+      field specifies a priority value between 0 and 7, these values
+
+      can be used by quality of service (QoS) to prioritize
+
+      different classes of traffic.";
+
+    reference
+
+     "IEEE 802.1Q-2014: Virtual Bridged Local Area Networks";
+
+  }
+
+
+
+  grouping cos-marking {
+
+    description
+
+      "Configuration data for CU Plane ethernet CoS marking.
+
+      This grouping is only applicable to an interface when vlan-tagging is
+
+      set to TRUE for that interface. In other cases, it may be ignored.";
+
+    container class-of-service {
+
+      description
+
+        "CoS Configuration";
+
+      leaf u-plane-marking {
+
+        type pcp;
+
+        default 7;
+
+        description
+
+          "Marking used for default u-plane flows.
+
+          7 represents highest priority for u-plane marking";
+
+      }
+
+      leaf c-plane-marking {
+
+        type pcp;
+
+        default 7;
+
+        description "7 represents highest priority for c-plane marking";
+
+      }
+
+      leaf m-plane-marking {
+
+        type pcp;
+
+        default 2;
+
+        description "2 represents highest excellent effort for m-plane marking";
+
+      }
+
+      leaf s-plane-marking {
+
+        type pcp;
+
+        default 7;
+
+        description "7 represents highest priority for s-plane marking";
+
+      }
+
+      leaf other-marking {
+
+        type pcp;
+
+        default 1;
+
+        description "1 represents best effort for other marking";
+
+      }
+
+      list enhanced-uplane-markings{
+
+        key "up-marking-name";
+
+        max-elements 4;
+
+        description
+
+          "list of mappings for enhanced (non-default) u-plane markings";
+
+        leaf up-marking-name {
+
+          type string;
+
+          description "The name of the marking";
+
+        }
+
+        leaf enhanced-marking {
+
+          type pcp;
+
+          description "the enhanced u-plane marking";
+
+        }
+
+      }
+
+    }
+
+  }
+
+
+
+  grouping dscp-marking {
+
+    description
+
+      "Configuration data for CU Plane DSCP marking";
+
+    container diffserv-markings {
+
+      description
+
+        "DSCP Configuration";
+
+      leaf u-plane-marking {
+
+        type inet:dscp;
+
+        default 46;
+
+        description
+
+          "Marking used for default u-plane flows.
+
+          46 represents expedited forwarding";
+
+      }
+
+      leaf c-plane-marking {
+
+        type inet:dscp;
+
+        default 46;
+
+        description "46 represents expedited forwarding";
+
+      }
+
+      leaf s-plane-marking {
+
+        type inet:dscp;
+
+        default 46;
+
+        description "46 represents expedited forwarding";
+
+      }
+
+      leaf other-marking {
+
+        type inet:dscp;
+
+        default 0;
+
+        description "0 represents best effort forwarding";
+
+      }
+
+      list enhanced-uplane-markings{
+
+        key up-marking-name;
+
+        max-elements 64;
+
+        description
+
+          "list of mappings for enhanced (non-default) u-plane markings";
+
+        leaf up-marking-name {
+
+          type string;
+
+          description "The name of the marking";
+
+        }
+
+        leaf enhanced-marking {
+
+          type inet:dscp;
+
+          description "the enhanced u-plane marking";
+
+        }
+
+      }
+
+    }
+
+  }
+
+
+
+// Cross Working Group Augmentations Follow
+
+
+
+// Cross Working Group augmentations for basic Ethernet leafs
+
+
+
+  augment "/if:interfaces/if:interface" {
+
+    when "if:type = 'ianaift:ethernetCsmacd'" {
+
+      description "Applies to Ethernet interfaces";
+
+    }
+
+    description
+
+      "Augment the interface model with parameters for
+
+      base Ethernet interface";
+
+
+
+    leaf l2-mtu {
+
+      type uint16 {
+
+        range "64 .. 65535";
+
+      }
+
+      units bytes;
+
+      default 1500;
+
+      description
+
+        "The maximum size of layer 2 frames that may be transmitted
+
+        or received on the interface (excluding any FCS overhead).
+
+        For Ethernet interfaces it also excludes the
+
+        4-8 byte overhead of any known (i.e. explicitly matched by
+
+        a child sub-interface) 801.1Q VLAN tags.";
+
+    }
+
+    leaf vlan-tagging {
+
+      type boolean;
+
+      default true;
+
+      description
+
+        "Indicates if VLAN tagging is used.
+
+        Default true is used to enable equipment to autonomously discover that
+
+        it is connected to a trunk port.
+
+
+
+        This may be set to false, for example, when the O-RU is directly
+
+        connected to the O-DU. In such cases, native Ethernet frames may be
+
+        used across the O-RAN interface, i.e., any PCP markings defined
+
+        in the cos-markings grouping are NOT used by the O-RU and any default
+
+        value or configured value using those leafs may be ignored by the O-RAN
+
+        equipment.";
+
+    }
+
+    uses cos-marking;
+
+  }
+
+
+
+// Cross Working Group augmentation for l2vlan interfaces for VLAN definition
+
+
+
+  augment "/if:interfaces/if:interface" {
+
+    when "if:type = 'ianaift:l2vlan'";
+
+    description "augments for VLAN definition";
+
+    leaf base-interface {
+
+      type if:interface-ref;
+
+      must "/if:interfaces/if:interface[if:name = current()]"
+
+            + "/o-ran-int:vlan-tagging = 'true'" {
+
+        description
+
+          "The base interface must have VLAN tagging enabled.";
+
+      }
+
+      description
+
+        "The base interface for the VLAN sub-interafce.";
+
+    }
+
+    leaf vlan-id {
+
+      type uint16 {
+
+        range "1..4094";
+
+      }
+
+      description
+
+        "The VLAN-ID.";
+
+    }
+
+  }
+
+
+
+// Cross Working Group augmention for both ethernetCsmacd and l2vlan interfaces
+
+
+
+  augment "/if:interfaces/if:interface" {
+
+    when "(if:type = 'ianaift:ethernetCsmacd') or
+
+          (if:type = 'ianaift:l2vlan')" {
+
+      description "Applies to ethernetCsmacd and l2vlan interfaces";
+
+    }
+
+    description
+
+      "Augment the interface model with parameters for all
+
+      both ethernetCsmacd and l2vlan interfaces.";
+
+    leaf last-cleared {
+
+      type yang:date-and-time;
+
+      config false;
+
+      description
+
+        "Timestamp of the last time the interface counters were
+
+        cleared.";
+
+    }
+
+  }
+
+
+
+// Cross Working Group augmention to ietf-ip covering DSCP for M-Plane
+
+
+
+augment "/if:interfaces/if:interface/ip:ipv4" {
+
+  description "augments for IPv4 based M-Plane transport";
+
+  leaf m-plane-marking {
+
+    type inet:dscp;
+
+    default 18;
+
+    description "18 represents AF21 or 'immediate traffic'";
+
+  }
+
+}
+
+augment "/if:interfaces/if:interface/ip:ipv6" {
+
+  description "augments for IPv6 based M-Plane transport";
+
+  leaf m-plane-marking {
+
+    type inet:dscp;
+
+    default 18;
+
+    description "18 represents AF21 or 'immediate traffic'";
+
+  }
+
+}
+
+
+
+// WG4 Specific Augmentations Follow
+
+
+
+// WG4 Augmentation for basic Ethernet leafs
+
+
+
+  augment "/if:interfaces/if:interface" {
+
+    if-feature ALIASMAC-BASED-CU-PLANE;
+
+    when "if:type = 'ianaift:ethernetCsmacd'" {
+
+      description
+
+        "Applies to WG4 Ethernet interfaces for alias MAC based CU-Plane";
+
+    }
+
+    description
+
+      "Augment the interface model with parameters for
+
+      base Ethernet interface";
+
+
+
+    leaf-list alias-macs {
+
+      type yang:mac-address;
+
+      description
+
+        "Augments interfaces with range of alias MAC addresses.";
+
+    }
+
+  }
+
+
+
+// WG4 Augmention for both ethernetCsmacd and l2vlan interfaces
+
+
+
+  augment "/if:interfaces/if:interface" {
+
+    when "(if:type = 'ianaift:ethernetCsmacd') or
+
+          (if:type = 'ianaift:l2vlan')" {
+
+      description "Applies to ethernetCsmacd and l2vlan interfaces";
+
+    }
+
+    description
+
+      "Augment the interface model with parameters for all
+
+      both ethernetCsmacd and l2vlan interfaces.";
+
+    leaf mac-address {
+
+      type yang:mac-address;
+
+      description
+
+        "The MAC address of the interface.";
+
+    }
+
+    container port-reference {
+
+      description
+
+        "a port reference used by other O-RAN modules";
+
+      leaf port-name {
+
+        type leafref {
+
+          path '/hw:hardware/hw:component/hw:name';
+
+        }
+
+        must "derived-from-or-self(deref(current())/../hw:class, 'ianahw:port')";
+
+// TAKE NOTE - depending on version of pyang, this may generate various
+
+// warnings, e.g., warning: XPath for "port-name" does not exist
+
+        description
+
+          "O-RAN interfaces use a reference to a physical port component.
+
+
+
+          In this case, the component name referenced must be of class type
+
+          port, i.e., when /hw:hardware/hw:component/hw:class is derived from
+
+          ianahw:port";
+
+      }
+
+      leaf port-number {
+
+        type uint8;
+
+        description
+
+          "A number allocated by the server which identifies a port.
+
+          Port number value is 0 to N-1 where N is number of ports
+
+          in the device.
+
+
+
+          This value is fixed for the lifetime of the equipment, i.e., cannot be
+
+          changed during equipment reboots.";
+
+      }
+
+    }
+
+  }
+
+
+
+// WG4 specific augmention to ietf-ip covering DSCP for CUS Plane
+
+
+
+  augment "/if:interfaces/if:interface/ip:ipv4" {
+
+    if-feature UDPIP-BASED-CU-PLANE;
+
+    description "augments for IPv4 based CUS transport";
+
+    uses dscp-marking;
+
+  }
+
+  augment "/if:interfaces/if:interface/ip:ipv6" {
+
+    if-feature UDPIP-BASED-CU-PLANE;
+
+    description "augments for IPv6 based CUS transport";
+
+    uses dscp-marking;
+
+  }
+
+
+
+// Other Working Group Specific Augmentations Follow Here
+
+
+
+
+
+  rpc reset-interface-counters {
+
+    description
+
+      "Management plane triggered restart of the interface counters.";
+
+  }
+
+}
+module o-ran-transceiver {
+
+  yang-version 1.1;
+
+  namespace "urn:o-ran:transceiver:1.0";
+
+  prefix "o-ran-transceiver";
+
+
+
+  import o-ran-interfaces {
+
+    prefix "o-ran-int";
+
+  }
+
+
+
+  import ietf-interfaces {
+
+    prefix "if";
+
+  }
+
+
+
+  organization "O-RAN Alliance";
+
+
+
+  contact
+
+    "www.o-ran.org";
+
+
+
+  description
+
+    "This module defines the operational state data for SFP transceivers used in
+
+    an O-RAN Radio Unit.
+
+
+
+    Copyright 2019 the O-RAN Alliance.
+
+
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS'
+
+    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+
+    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+
+    ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+
+    LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+
+    CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+
+    SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+
+    INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+
+    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+
+    POSSIBILITY OF SUCH DAMAGE.
+
+
+
+    Redistribution and use in source and binary forms, with or without
+
+    modification, are permitted provided that the following conditions are met:
+
+
+
+    * Redistributions of source code must retain the above copyright notice,
+
+    this list of conditions and the above disclaimer.
+
+    * Redistributions in binary form must reproduce the above copyright notice,
+
+    this list of conditions and the above disclaimer in the documentation
+
+    and/or other materials provided with the distribution.
+
+    * Neither the Members of the O-RAN Alliance nor the names of its
+
+    contributors may be used to endorse or promote products derived from
+
+    this software without specific prior written permission.";
+
+
+
+  revision "2019-07-03" {
+
+    description
+
+      "version 2.0.0
+
+
+
+      1) introduction of reporting for QSFP.
+
+      2) backward compatible changes to introduce groupings.";
+
+
+
+    reference "ORAN-WG4.M.0-v02.00";
+
+  }
+
+
+
+  revision "2019-02-04" {
+
+    description
+
+      "version 1.0.0
+
+
+
+      1) imported model from xRAN
+
+      2) changed namespace and reference from xran to o-ran";
+
+
+
+    reference "ORAN-WG4.M.0-v01.00";
+
+  }
+
+
+
+
+
+  // Groupings
+
+
+
+  grouping transceiver-group {
+
+    list port-transceiver-data {
+
+      key "interface-name port-number";
+
+      description "data recovered from port transceivers";
+
+      leaf interface-name {
+
+        type leafref {
+
+          path "/if:interfaces/if:interface/if:name";
+
+        }
+
+        description "Name of interface";
+
+      }
+
+      leaf port-number {
+
+        type leafref {
+
+          path "/if:interfaces/if:interface[if:name = current()/../interface-name]" + "/o-ran-int:port-reference/o-ran-int:port-number";
+
+        }
+
+        description
+
+        "A number which identifies a port. In case of SFP/SFP+
+
+        port, port number value is 0 to N-1 where N is number of ports
+
+        in the device. Numbers 0 to N-1 are assigned to ports in order
+
+        following order of labels on the device (labels for ports are
+
+        not necessarily numbers starting from zero)";
+
+      }
+
+
+
+      leaf name {
+
+        type string {
+
+          length "1..255";
+
+        }
+
+        description
+
+          "A name that is unique across the O-RU that identifies a transceiver instance.
+
+          This name may be used in fault management to refer to a fault source
+
+          or affected object";
+
+      }
+
+
+
+      leaf present {
+
+        type boolean;
+
+        config false;
+
+        mandatory true;
+
+        description
+
+          "Indicates if pluggable transceiver module is present.";
+
+      }
+
+
+
+      leaf vendor-id {
+
+        type string {
+
+          length 1..16;
+
+        }
+
+        config false;
+
+        description
+
+          "Name of the transciever vendor Full name of transceiver vendor,
+
+          that contains ASCII characters, left-aligned with
+
+          any padding on the right with ASCII spaces (20h), or ASCII nul
+
+          (00h) removed, and ASCII less-than (3Ch) replaced with ASCII
+
+          open-brace (7Bh) and ASCII more-than (3Eh) replaced with ASCII
+
+          close-brace (7Dh).
+
+
+
+          Optional node included when the NETCONF Server has determined
+
+          the vendor ID.";
+
+      }
+
+
+
+      leaf vendor-part {
+
+        type string {
+
+          length 1..16;
+
+        }
+
+        config false;
+
+        description
+
+          "Transceiver vendors part number, that contains ASCII characters,
+
+          left-aligned with any padding on the right with ASCII spaces
+
+          (20h), or ASCII nul (00h) removed, and ASCII less-than (3Ch)
+
+          replaced with ASCII open-brace (7Bh) and ASCII more-than (3Eh)
+
+          replaced with ASCII close-brace (7Dh).
+
+
+
+          Optional node included when the NETCONF Server has determined
+
+          the vendor part number.";
+
+      }
+
+
+
+      leaf vendor-rev {
+
+        type string {
+
+          length 1..2;
+
+        }
+
+        config false;
+
+        description
+
+          "Transceiver vendors revision number. 2-octet field that
+
+          contains ASCII characters.
+
+
+
+          Optional node included when the NETCONF Server has determined
+
+          the vendor revision number";
+
+      }
+
+
+
+      leaf serial-no {
+
+        type string {
+
+          length 1..16;
+
+        }
+
+        config false;
+
+        description
+
+          "Transceiver serial number encoded using ASCII characters,
+
+          left-aligned with any padding on the right with ASCII spaces
+
+          (20h), or ASCII nul (00h) removed, and ASCII less-than (3Ch)
+
+          replaced with ASCII open-brace (7Bh) and ASCII more-than (3Eh)
+
+          replaced with ASCII close-brace (7Dh).
+
+
+
+          Optional node included when the NETCONF Server has determined
+
+          the serial number.";
+
+      }
+
+
+
+      leaf SFF8472-compliance-code {
+
+        type enumeration {
+
+          enum diagnostics-undefined {
+
+            description "undefined compliance code";
+
+          }
+
+          enum rev9.3-diagnostics {
+
+            description "diagnostics published 08-01-02";
+
+          }
+
+          enum rev9.5-diagnostics{
+
+            description "diagnostics published 06-01-04";
+
+          }
+
+          enum rev10.2-diagnostics{
+
+            description "diagnostics published 06-01-07";
+
+          }
+
+          enum rev11.0-diagnostics{
+
+            description "diagnostics published 05-21-10";
+
+          }
+
+          enum rev11.3-diagnostics{
+
+            description "diagnostics published 06-11-13";
+
+          }
+
+          enum rev11.4-diagnostics{
+
+            description "diagnostics published 07-24-14";
+
+          }
+
+          enum rev12.0-diagnostics{
+
+            description "diagnostics published 08-28-14";
+
+          }
+
+        }
+
+        config false;
+
+        description
+
+          "Indication of which feature set(s) are
+
+          implemented in the transceiver from Byte 94 of address A0h
+
+          https://ta.snia.org/higherlogic/ws/public/download/294/SFF-8472.PDF
+
+
+
+          Optional node included when the NETCONF Server has determined
+
+          the compliance code.";
+
+
+
+        reference "https://ta.snia.org/higherlogic/ws/public/download/294/SFF-8472.PDF";
+
+      }
+
+
+
+       leaf connector-type {
+
+        type enumeration {
+
+          enum unknown {
+
+            description "encoded as 00h in Table 4-3 of SFF-8024";
+
+          }
+
+          enum subscrber-connector {
+
+            description "encoded as 01h in Table 4-3 of SFF-8024";
+
+          }
+
+          enum fiber-jack {
+
+            description "encoded as 06h in Table 4-3 of SFF-8024";
+
+          }
+
+          enum lucent-connector {
+
+            description "encoded as 07h in Table 4-3 of SFF-8024";
+
+          }
+
+          enum mt-rj {
+
+            description "encoded as 08h in Table 4-3 of SFF-8024";
+
+          }
+
+          enum multiple-optical {
+
+            description "encoded as 09h in Table 4-3 of SFF-8024";
+
+          }
+
+          enum sg {
+
+            description "encoded as 0Ah in Table 4-3 of SFF-8024";
+
+          }
+
+          enum optical-pigtail {
+
+            description "encoded as 0Bh in Table 4-3 of SFF-8024";
+
+          }
+
+          enum multi-fiber-parralel-optic-1x12 {
+
+            description "encoded as 0Ch in Table 4-3 of SFF-8024";
+
+          }
+
+          enum multi-fiber-parralel-optic-2x16 {
+
+            description "encoded as 0Dh in Table 4-3 of SFF-8024";
+
+          }
+
+          enum hssdc_2{
+
+            description "encoded as 20h in Table 4-3 of SFF-8024";
+
+          }
+
+          enum copper-pigtail{
+
+            description "encoded as 21h in Table 4-3 of SFF-8024";
+
+          }
+
+          enum rj45{
+
+            description "encoded as 22h in Table 4-3 of SFF-8024";
+
+          }
+
+          enum no-separable-connector{
+
+            description "encoded as 23h in Table 4-3 of SFF-8024";
+
+          }
+
+          enum mxc-2x16{
+
+            description "encoded as 24h in Table 4-3 of SFF-8024";
+
+          }
+
+        }
+
+        config false;
+
+        // TOCHECK: Remove any enumerations which are not applicable
+
+        description
+
+          "Connector-type indicates the external optical or electrical cable
+
+          connector provided as the media interface as defined in the connector
+
+          types derived from table 4-3 in SFF-8024.
+
+
+
+          Optional node included when the NETCONF Server has determined
+
+          the connector type.";
+
+        reference "https://ta.snia.org/higherlogic/ws/public/document?document_id=944";
+
+      }
+
+
+
+      leaf identifier {
+
+        type enumeration {
+
+          enum unknown {
+
+            description "encoded as 00h in Table 4-1 of SFF-8024";
+
+          }
+
+          enum gbic {
+
+            description "encoded as 01h in Table 4-1 of SFF-8024";
+
+          }
+
+          enum soldered {
+
+            description "encoded as 02h in Table 4-1 of SFF-8024";
+
+          }
+
+          enum sfp {
+
+            description "encoded as 03h in Table 4-1 of SFF-8024";
+
+          }
+
+          enum xbi {
+
+            description "encoded as 04h in Table 4-1 of SFF-8024";
+
+          }
+
+          enum xenpack {
+
+            description "encoded as 05h in Table 4-1 of SFF-8024";
+
+          }
+
+          enum xfp {
+
+            description "encoded as 06h in Table 4-1 of SFF-8024";
+
+          }
+
+          enum xff {
+
+            description "encoded as 07h in Table 4-1 of SFF-8024";
+
+          }
+
+          enum xfp-e {
+
+            description "encoded as 08h in Table 4-1 of SFF-8024";
+
+          }
+
+          enum xpak {
+
+            description "encoded as 09h in Table 4-1 of SFF-8024";
+
+          }
+
+          enum x2 {
+
+            description "encoded as 0Ah in Table 4-1 of SFF-8024";
+
+          }
+
+          enum dwdm-sfp {
+
+            description "encoded as 0Bh in Table 4-1 of SFF-8024";
+
+          }
+
+          enum qsfp {
+
+            description "encoded as 0Ch in Table 4-1 of SFF-8024";
+
+          }
+
+          enum qsfp+ {
+
+            description "encoded as 0Dh in Table 4-1 of SFF-8024";
+
+          }
+
+        }
+
+        config false;
+
+        description
+
+          "Connector identifier as defined in the identifer
+
+          types derived from table 4-1 in SFF-8024.
+
+
+
+          Optional node included when the NETCONF Server has determined
+
+          the identifier type.";
+
+        reference "https://members.snia.org/document/dl/26423";
+
+      }
+
+
+
+      leaf nominal-bitrate {
+
+        type uint32;
+
+        config false;
+
+        description
+
+          "Nominal bitrate in Mb/s (10^6 bits per second).
+
+          If needed actual value is rounded to nearest integer.
+
+
+
+          Optional node included when the NETCONF Server has determined
+
+          the nominal bit rate.";
+
+      }
+
+
+
+      leaf low-bitrate-margin {
+
+        type uint8;
+
+        config false;
+
+        description
+
+          "Minimum supported bitrate as percentage of nominal bitrate
+
+          below nominal bitrate.
+
+
+
+          Optional node included when the NETCONF Server has determined
+
+          the low bit rate margin";
+
+      }
+
+
+
+      leaf high-bitrate-margin {
+
+        type uint8;
+
+        config false;
+
+        description
+
+          "Maximum supported bitrate as percentage of nominal bitrate
+
+          above nominal bitrate.
+
+
+
+          Optional node included when the NETCONF Server has determined
+
+          the high bitrate margin.";
+
+      }
+
+
+
+      leaf rx-power-type {
+
+        type enumeration {
+
+          enum oma {
+
+            description "oma = optical modulation amplitude";
+
+          }
+
+          enum avp{
+
+            description "avp = average power";
+
+          }
+
+        }
+
+        config false;
+
+        description
+
+          "Receieved power measurement type
+
+          oma = optical modulation amplitude
+
+          avp = average power
+
+
+
+          Optional node included when the NETCONF Server has determined
+
+          the rx power type.";
+
+      }
+
+
+
+      leaf rx-power {
+
+        type decimal64{
+
+          fraction-digits 4;
+
+        }
+
+        config false;
+
+        description
+
+          "Measured RX input power in mW.
+
+
+
+          Optional node included when the NETCONF Server has determined
+
+          the measured RX power.
+
+
+
+          If operating with QSFP, this power corresponds to that of
+
+          Lane/Channel 1.";
+
+      }
+
+
+
+      leaf tx-power {
+
+        type decimal64{
+
+          fraction-digits 4;
+
+        }
+
+        config false;
+
+        description
+
+          "Measured coupled TX output power in mW.
+
+
+
+          Optional node included when the NETCONF Server has determined
+
+          the measured coupled TX power.";
+
+      }
+
+
+
+      leaf tx-bias-current {
+
+        type decimal64{
+
+          fraction-digits 4;
+
+        }
+
+        config false;
+
+        description
+
+          "Measured transmitter laser bias current in mA.
+
+
+
+          Optional node included when the NETCONF Server has determined
+
+          the tx bias current.
+
+
+
+          If operating with QSFP, this bias current corresponds to that of
+
+          Lane/Channel 1.";
+
+      }
+
+
+
+      leaf voltage {
+
+        type decimal64{
+
+          fraction-digits 4;
+
+        }
+
+        config false;
+
+        description
+
+          "Internally measured supply voltage in mV.
+
+
+
+          Optional node included when the NETCONF Server has determined
+
+          the internally measured voltage.";
+
+      }
+
+
+
+      leaf temperature {
+
+        type decimal64 {
+
+          fraction-digits 4;
+
+        }
+
+        config false;
+
+        description
+
+          "Internally measured module temperature in degrees Celcius.
+
+
+
+          Optional node included when the NETCONF Server has determined
+
+          the temperature.";
+
+      }
+
+
+
+      list additional-multi-lane-reporting {
+
+        when "(../identifier ='qsfp')or(../identifier ='qsfp+')";
+
+        config false;
+
+        description
+
+          "Additional reporting according to SFF8436 which specifies real time
+
+          channel monitoring for each transmit and receive channel and includes
+
+          optical input power and Tx bias current. ";
+
+        key lane;
+
+        leaf lane {
+
+          type uint8 {
+
+            range "2..4";
+
+          }
+
+          description
+
+            "the specific lane/channel associated with the report parameters";
+
+        }
+
+        leaf rx-power {
+
+          type decimal64{
+
+            fraction-digits 4;
+
+          }
+
+          config false;
+
+          description
+
+            "Measured RX input power in mW.
+
+
+
+            Optional node included when the NETCONF Server has determined
+
+            the measured RX power for a particular lane/channel
+
+            - see tabel 7-10 of SFF-8636.";
+
+        }
+
+        leaf tx-bias-current {
+
+          type decimal64{
+
+            fraction-digits 4;
+
+          }
+
+          config false;
+
+          description
+
+            "Measured transmitter laser bias current in mA.
+
+
+
+            Optional node included when the NETCONF Server has determined
+
+            the tx bias current for a particular lane/channel
+
+            - see tabel 7-10 of SFF-8636.";
+
+        }
+
+        leaf tx-power {
+
+          type decimal64{
+
+            fraction-digits 4;
+
+          }
+
+          config false;
+
+          description
+
+            "Measured coupled TX output power in mW.
+
+
+
+            Optional node included when the NETCONF Server has determined
+
+            the measured coupled TX power or a particular lane/channel
+
+            - see tabel 7010 of SFF-8636.";
+
+        }
+
+      }
+
+    }
+
+
+
+  }
+
+
+
+  // Top Level Container
+
+
+
+  container port-transceivers {
+
+    description
+
+      "Container for Port transceiver information.
+
+      Leaf nodes providing  parameters status and diagnostic
+
+      information for pluggable transceiver module (like SFP,
+
+      SFP+, SFP28)";
+
+
+
+    uses transceiver-group;
+
+  }
+
+}
+module o-ran-compression-factors {
+
+  yang-version 1.1;
+
+  namespace "urn:o-ran:compression-factors:1.0";
+
+  prefix "o-ran-compression-factors";
+
+
+
+
+
+  organization "O-RAN Alliance";
+
+
+
+  contact
+
+    "www.o-ran.org";
+
+
+
+  description
+
+    "This module defines the module capabilities for
+
+    the O-RAN Radio Unit U-Plane configuration.
+
+
+
+    Copyright 2019 the O-RAN Alliance.
+
+
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS'
+
+    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+
+    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+
+    ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+
+    LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+
+    CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+
+    SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+
+    INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+
+    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+
+    POSSIBILITY OF SUCH DAMAGE.
+
+
+
+    Redistribution and use in source and binary forms, with or without
+
+    modification, are permitted provided that the following conditions are met:
+
+
+
+    * Redistributions of source code must retain the above copyright notice,
+
+    this list of conditions and the above disclaimer.
+
+    * Redistributions in binary form must reproduce the above copyright notice,
+
+    this list of conditions and the above disclaimer in the documentation
+
+    and/or other materials provided with the distribution.
+
+    * Neither the Members of the O-RAN Alliance nor the names of its
+
+    contributors may be used to endorse or promote products derived from
+
+    this software without specific prior written permission.";
+
+
+
+   revision "2020-03-05" {
+
+    description
+
+      "version 3.0.0
+
+
+
+      1) adding selective RE sending compression types";
+
+
+
+    reference "ORAN-WG4.M.0-v03.00";
+
+  }
+
+  
+
+  revision "2019-07-03" {
+
+    description
+
+      "version 1.1.0
+
+
+
+      1) changes related to compression bitwidth presentation";
+
+
+
+    reference "ORAN-WG4.M.0-v01.00";
+
+  }
+
+
+
+  revision "2019-02-04" {
+
+    description
+
+      "version 1.0.0
+
+
+
+      1) imported model from xRAN
+
+      2) changed namespace and reference from xran to o-ran";
+
+
+
+    reference "ORAN-WG4.M.0-v01.00";
+
+  }
+
+
+
+  grouping compression-params {
+
+    leaf compression-type {
+
+      type enumeration {
+
+        enum STATIC {
+
+          description
+
+            "Indicates that static compression method will be used (both compression and IQ bitwidth)";
+
+        }
+
+        enum DYNAMIC {
+
+          description
+
+            "Indicates that dynamic compression method will be used";
+
+        }
+
+      }
+
+      mandatory true;
+
+      description
+
+        "Compression type that O-DU wants to be supported";
+
+    }
+
+
+
+// *********** TO BE REMOVED ***********
+
+    leaf bitwidth {
+
+      when "../compression-type = 'STATIC'";
+
+      type uint8;
+
+      status deprecated;
+
+      description
+
+        "Bitwidth to be used in compression";
+
+    }
+
+// *************************************
+
+
+
+    choice compression-format {
+
+      description
+
+        "Choice of compression format for particular element";
+
+
+
+      case no-compresison {
+
+        description "Compression for beam weights is not supported.";
+
+      }
+
+      case block-floating-point {
+
+        description "Block floating point compression and decompression is supported.";
+
+
+
+        leaf exponent {
+
+          type uint8 {
+
+            range "4";
+
+          }
+
+          description "Exponent bit width size in number of bits used when encoding in udCompParam.";
+
+        }
+
+      }
+
+
+
+      case block-floating-point-selective-re-sending {
+
+        description
+
+          "Block floating point with selective re sending compression and decompression is supported.";
+
+
+
+        leaf sres-exponent {
+
+          type uint8 {
+
+            range "4";
+
+          }
+
+          description "Exponent bit width size in number of bits used when encoding in udCompParam.";
+
+        }
+
+      }
+
+
+
+      case block-scaling {
+
+        description "Block scaling compression and decompresion is supported.";
+
+        leaf block-scalar {
+
+          type uint8;
+
+            description
+
+              "Common scaler for compressed PRB";
+
+        }
+
+      }
+
+
+
+      case u-law {
+
+        description "u-Law compression and decompresion method is supported.";
+
+        leaf comp-bit-width {
+
+          type uint8 {
+
+            range "0..15";
+
+          }
+
+          description "Bit with for u-law compression";
+
+        }
+
+        leaf comp-shift {
+
+          type uint8 {
+
+            range "0..15";
+
+          }
+
+          description
+
+            "the shift applied to the entire PRB";
+
+        }
+
+      }
+
+
+
+      case beam-space-compression {
+
+        description "Beamspace compression and decompression is supported. Applies to beamforming weights only.";
+
+        leaf-list active-beam-space-coeficient-mask {
+
+          type uint8;
+
+          description
+
+            "active beamspace coefficient indices associated with the compressed beamforming vector";
+
+        }
+
+        leaf block-scaler {
+
+          type uint8;
+
+          description
+
+            "Common scaler for compressed beamforming coefficients";
+
+        }
+
+      }
+
+
+
+      case modulation-compression {
+
+        description "Modulation compression and decompression is supported.";
+
+        leaf csf {
+
+          type uint8 {
+
+            range "0..1";
+
+          }
+
+          description "Constallation shift flag";
+
+        }
+
+
+
+        leaf mod-comp-scaler {
+
+          type uint16 {
+
+            range "0..32767";
+
+          }
+
+          description "Modulation compression scaler value.";
+
+        }
+
+      }
+
+
+
+      case modulation-compression-selective-re-sending {
+
+        description "Modulation compression with selective re sending and decompression is supported.";
+
+        leaf sres-csf {
+
+          type uint8 {
+
+            range "0..1";
+
+          }
+
+          description "Constallation shift flag";
+
+        }
+
+
+
+        leaf sres-mod-comp-scaler {
+
+          type uint16 {
+
+            range "0..32767";
+
+          }
+
+          description "Modulation compression scaler value.";
+
+        }
+
+      }
+
+
+
+    }
+
+  }
+
+
+
+  grouping compression-details {
+
+    description "";
+
+
+
+    leaf iq-bitwidth {
+
+      type uint8;
+
+      description
+
+        "Bitwidth to be used in compression";
+
+    }
+
+
+
+    uses compression-params;
+
+  }
+
+}
+module o-ran-dhcp {
+
+  yang-version 1.1;
+
+  namespace "urn:o-ran:dhcp:1.0";
+
+  prefix "o-ran-dhcp";
+
+
+
+  import ietf-interfaces {
+
+    prefix "if";
+
+  }
+
+
+
+  import ietf-inet-types {
+
+    prefix "inet";
+
+  }
+
+
+
+  import ietf-dhcpv6-types {
+
+    prefix dhcpv6-type;
+
+    revision-date 2018-01-30;
+
+  }
+
+
+
+  organization "O-RAN Alliance";
+
+
+
+  contact
+
+    "www.o-ran.org";
+
+
+
+  description
+
+    "This module defines the YANG definitions for managng the DHCP client.
+
+
+
+    Copyright 2019 the O-RAN alliance.
+
+
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS'
+
+    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+
+    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+
+    ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+
+    LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+
+    CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+
+    SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+
+    INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+
+    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+
+    POSSIBILITY OF SUCH DAMAGE.
+
+
+
+    Redistribution and use in source and binary forms, with or without
+
+    modification, are permitted provided that the following conditions are met:
+
+
+
+    * Redistributions of source code must retain the above copyright notice,
+
+    this list of conditions and the above disclaimer.
+
+    * Redistributions in binary form must reproduce the above copyright notice,
+
+    this list of conditions and the above disclaimer in the documentation
+
+    and/or other materials provided with the distribution.
+
+    * Neither the Members of the O-RAN Alliance nor the names of its
+
+    contributors may be used to endorse or promote products derived from
+
+    this software without specific prior written permission.";
+
+
+
+  revision "2019-07-03" {
+
+    description
+
+      "version 1.1.0
+
+
+
+      1) backward compatible changes to fix pen number which always
+
+      should have been 32 bits
+
+      2) backward compatible changes to introduce reporting of 3GPP
+
+      discovered MV-PnP information, including CA/RA Servers and SeGW
+
+      3) backward compatible changes to introduce groupings";
+
+
+
+    reference "ORAN-WG4.M.0-v01.00";
+
+  }
+
+
+
+  revision "2019-02-04" {
+
+    description
+
+      "version 1.0.0
+
+
+
+      1) imported model from xRAN
+
+      2) changed namespace and reference from xran to o-ran";
+
+
+
+    reference "ORAN-WG4.M.0-v01.00";
+
+  }
+
+
+
+  typedef netconf-client-id {
+
+    type union {
+
+      type inet:ip-address;
+
+      type inet:uri;
+
+    }
+
+    description "A NETCONF client identifier";
+
+  }
+
+
+
+  typedef ca-ra-server-id {
+
+    type union {
+
+      type inet:ip-address;
+
+      type inet:uri;
+
+    }
+
+    description "A CA/RA Server identifier";
+
+  }
+
+
+
+  typedef segw-id {
+
+    type union {
+
+      type inet:ip-address;
+
+      type inet:uri;
+
+    }
+
+    description "A SeGW identifier";
+
+  }
+
+
+
+  grouping ca-ra-servers {
+
+    description
+
+      "The CA/RA servers discovered using DHCP, discovered using the 3GPP
+
+      defined options in 3GPP 32.509 in vendor specific option 43/17";
+
+    list ca-ra-servers {
+
+      key servers;
+
+      description "A list of IP addresses or URIs for CA/RA Servers";
+
+
+
+      leaf servers{
+
+        type ca-ra-server-id;
+
+        description "the server identifier";
+
+      }
+
+      leaf port-number {
+
+        type inet:port-number;
+
+        description "an optional (non-default) port";
+
+      }
+
+      leaf ca-ra-path {
+
+        type string;
+
+        description
+
+          "ASCII string representing the path to the CMP server directory.
+
+          A CMP server may be located in an arbitrary path other than root.";
+
+      }
+
+      leaf subject-name {
+
+        type string;
+
+        description
+
+          "ASCII string representing the subject name of the CA/RA. ";
+
+      }
+
+      leaf protocol {
+
+        type enumeration {
+
+          enum HTTP;
+
+          enum HTTPS;
+
+        }
+
+      }
+
+    }
+
+  }
+
+
+
+  grouping security-gateways {
+
+    description
+
+      "The security gateways discovered using DHCP, discovered using the 3GPP
+
+      defined options in 3GPP 32.509 in vendor specific option 43/17";
+
+    list segw {
+
+      key gateways;
+
+      description "A list of IP addresses or URIs for SeGW";
+
+
+
+      leaf gateways{
+
+        type segw-id;
+
+        description "the SeGW identifier";
+
+      }
+
+    }
+
+
+
+  }
+
+
+
+  grouping netconf-clients {
+
+    description
+
+      "The netconf clients discovered using DHCP, discovered using the IANA
+
+      defined options or O-RAN defined syntax for encoding IP adresses or FQDNs
+
+      in vendor specific option 43/17";
+
+    list netconf-clients{
+
+      key client;
+
+      description "A list of IP addresses or URIs for NETCONF clients";
+
+      leaf client{
+
+        type netconf-client-id;
+
+        description "the client identifier";
+
+      }
+
+      leaf optional-port {
+
+        type inet:port-number;
+
+        description "an optional (non-default) port";
+
+      }
+
+    }
+
+  }
+
+
+
+  grouping dhcpv4-option {
+
+    description "DHCPv4 Configuration options";
+
+
+
+    leaf dhcp-server-identifier {
+
+      type  inet:ip-address;
+
+      description "DHCP server identifier";
+
+    }
+
+    leaf domain-name {
+
+      type  string;
+
+      description "Name of the domain";
+
+    }
+
+    leaf-list domain-name-servers {
+
+      type  inet:ip-address;
+
+      description "A list of DNS servers";
+
+    }
+
+    leaf interface-mtu {
+
+      type  uint32 {
+
+        range "0..65535";
+
+      }
+
+      description "Minimum Transmission Unit (MTU) of the interface";
+
+    }
+
+    leaf-list default-gateways{
+
+      type inet:ip-address;
+
+      description "the list of default gateways on the O-RUs subnet";
+
+    }
+
+    uses netconf-clients;
+
+    uses ca-ra-servers;
+
+    uses security-gateways;
+
+  }
+
+
+
+  grouping dhcpv6-option {
+
+    description "DHCPv6 Configuration options";
+
+
+
+    container dhcp-server-identifier{
+
+      description "dhcpv6 server identifief";
+
+      uses dhcpv6-type:duid;
+
+    }
+
+    leaf domain-name {
+
+      type  string;
+
+      description "Name of the domain";
+
+    }
+
+    leaf-list domain-name-servers {
+
+      type  inet:ip-address;
+
+      description "A list of DNS servers";
+
+    }
+
+    uses netconf-clients;
+
+    uses ca-ra-servers;
+
+    uses security-gateways;
+
+  }
+
+
+
+  grouping dhcp-group {
+
+    list interfaces {
+
+      key "interface";
+
+      description "Interface configuration";
+
+
+
+      leaf interface {
+
+        type if:interface-ref;
+
+        description "Name of the interface";
+
+      }
+
+
+
+      container dhcpv4 {
+
+        description "DHCPv4 information";
+
+        leaf client-id {
+
+          type string;
+
+          description "DHCP client identifier";
+
+        }
+
+        uses dhcpv4-option;
+
+      }
+
+      container dhcpv6 {
+
+        description "DHCPv6 information";
+
+        container dhcp-client-identifier{
+
+          description "dhcpv6 client identifief";
+
+          uses dhcpv6-type:duid;
+
+        }
+
+        uses dhcpv6-option;
+
+      }
+
+    }
+
+
+
+    container m-plane-dhcp {
+
+      description "leafs covering off DHCP aspects of m-plane operations";
+
+      leaf private-enterprise-number {
+
+        status deprecated;
+
+        type uint16;
+
+        default 53148;
+
+        description "the private enteprise number allocated to O-RAN Alliance";
+
+      }
+
+      leaf private-enterprise-num {
+
+        type uint32;
+
+        default 53148;
+
+        description "the private enterprise number allocated to O-RAN Alliance";
+
+      }
+
+      leaf vendor-class-data {
+
+        type string;
+
+        description
+
+          "The string used in DHCPv4 option 60 or DHCPv4 option 124 and
+
+          DHCPv6 option 16";
+
+      }
+
+    }
+
+  }
+
+
+
+
+
+  // Top Level Container
+
+
+
+  container dhcp {
+
+    config false;
+
+    description
+
+      "DHCP client configuration";
+
+
+
+    uses dhcp-group;
+
+  }
+
+}
+module o-ran-delay-management {
+
+  yang-version 1.1;
+
+  namespace "urn:o-ran:delay:1.0";
+
+  prefix "o-ran-delay";
+
+
+
+  organization "O-RAN Alliance";
+
+
+
+  contact
+
+    "www.o-ran.org";
+
+
+
+  description
+
+    "This module covers off aspects of O-DU to O-RU delay management,
+
+    including config data related to O-RU transmission and reception
+
+    windows.
+
+
+
+    Copyright 2019 the O-RAN Alliance.
+
+
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS'
+
+    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+
+    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+
+    ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+
+    LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+
+    CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+
+    SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+
+    INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+
+    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+
+    POSSIBILITY OF SUCH DAMAGE.
+
+
+
+    Redistribution and use in source and binary forms, with or without
+
+    modification, are permitted provided that the following conditions are met:
+
+
+
+    * Redistributions of source code must retain the above copyright notice,
+
+    this list of conditions and the above disclaimer.
+
+    * Redistributions in binary form must reproduce the above copyright notice,
+
+    this list of conditions and the above disclaimer in the documentation
+
+    and/or other materials provided with the distribution.
+
+    * Neither the Members of the O-RAN Alliance nor the names of its
+
+    contributors may be used to endorse or promote products derived from
+
+    this software without specific prior written permission.";
+
+
+
+  revision "2019-07-03" {
+
+    description
+
+      "version 1.1.0
+
+
+
+      1) fixing descriptions of ta3-min and ta3-max.
+
+      2) introducing grouping/uses to enable model re-use by WG5";
+
+
+
+    reference "ORAN-WG4.M.0-v01.00";
+
+  }
+
+
+
+  revision "2019-02-04" {
+
+    description
+
+      "version 1.0.0
+
+
+
+      1) imported model from xRAN
+
+      2) changed namespace and reference from xran to o-ran";
+
+
+
+    reference "ORAN-WG4.M.0-v01.00";
+
+  }
+
+
+
+
+
+  feature ADAPTIVE-RU-PROFILE {
+
+    description
+
+      "This feature indicates that the O-RU supports adaptive O-RU delay profile
+
+      based on information provided by the NETCONF client.";
+
+  }
+
+
+
+  typedef bandwidth {
+
+    type uint32 {
+
+      range "200 | 1400 | 3000 | 5000 | 10000 | 15000 | 20000 | 25000 |
+
+            30000 | 40000 | 50000 | 60000 | 70000 | 80000 | 90000 | 100000
+
+            | 200000 | 400000" ;
+
+    }
+
+    units kilohertz;
+
+    description
+
+      "transmission bandwidth configuration in units of kHz -
+
+      covering NBIoT through to New Radio - see 38.104";
+
+  }
+
+
+
+  grouping bandwidth-configuration {
+
+    description
+
+      "Grouping for bandwidth and scs configuration";
+
+
+
+    leaf bandwidth {
+
+      type bandwidth;
+
+      description
+
+        "transmission bandwidth configuration in units of kHz -
+
+        covering NBIoT through to New Radio - see 38.104";
+
+    }
+
+    leaf subcarrier-spacing {
+
+      type uint32 {
+
+        range "0 .. 240000 ";
+
+      }
+
+      units Hertz;
+
+      description "subcarrier spacing in Hz";
+
+    }
+
+  }
+
+
+
+  grouping t2a-up {
+
+    description
+
+      "configuration of t2a for uplink";
+
+
+
+    leaf t2a-min-up {
+
+      type uint32;
+
+      units nanoseconds;
+
+      mandatory true;
+
+      description
+
+        "the minimum O-RU data processing delay between receiving IQ data
+
+        message over the fronthaul interface and transmitting
+
+        the corresponding first IQ sample at the antenna";
+
+    }
+
+    leaf t2a-max-up {
+
+      type uint32;
+
+      units nanoseconds;
+
+      mandatory true;
+
+      description
+
+        "the earliest allowable time when a data packet is received before
+
+        the corresponding first IQ sample is transmitted at the antenna";
+
+    }
+
+  }
+
+
+
+  grouping t2a-cp-dl {
+
+    description
+
+      "Grouping for t2a CP for downlink";
+
+
+
+    leaf t2a-min-cp-dl {
+
+      type uint32;
+
+      units nanoseconds;
+
+      mandatory true;
+
+      description
+
+        "the minimum O-RU data processing delay between receiving downlink
+
+        real time control plane message over the fronthaul interface and
+
+        transmitting the corresponding first IQ sample at the antenna";
+
+    }
+
+    leaf t2a-max-cp-dl {
+
+      type uint32;
+
+      units nanoseconds;
+
+      mandatory true;
+
+      description
+
+        "the earliest allowable time when a downlink real time control message
+
+        is received before the corresponding first IQ sample is transmitted at
+
+        the antenna";
+
+    }
+
+  }
+
+
+
+  grouping ta3 {
+
+    description
+
+      "Grouping for ta3 configuration";
+
+
+
+    leaf ta3-min {
+
+      type uint32;
+
+      units nanoseconds;
+
+      mandatory true;
+
+      description
+
+        "the minimum O-RU data processing delay between receiving an IQ sample
+
+        at the antenna and transmitting the first data sample over the
+
+        fronthaul interface";
+
+    }
+
+    leaf ta3-max {
+
+      type uint32;
+
+      units nanoseconds;
+
+      mandatory true;
+
+      description
+
+        "the maximum O-RU data processing delay between receiving an IQ sample
+
+        at the antenna and transmitting the last data sample over the
+
+        fronthaul interface";
+
+    }
+
+  }
+
+
+
+  grouping t2a-cp-ul {
+
+    description
+
+      "Grouping for t2a CP uplink";
+
+
+
+    leaf t2a-min-cp-ul {
+
+      type uint32;
+
+      units nanoseconds;
+
+      mandatory true;
+
+      description
+
+        "the minimum O-RU data processing delay between receiving real time
+
+        up-link control plane message over the fronthaul interface and
+
+        recieving the first IQ sample at the antenna";
+
+    }
+
+    leaf t2a-max-cp-ul {
+
+      type uint32;
+
+      units nanoseconds;
+
+      mandatory true;
+
+      description
+
+        "the earliest allowable time when a real time up-link control message
+
+        is received before the corresponding first IQ sample is received  at
+
+        the antenna";
+
+    }
+
+  }
+
+
+
+  grouping ru-delay-profile {
+
+    description
+
+      "Grouping for ru delay profile";
+
+
+
+    uses t2a-up;
+
+    uses t2a-cp-dl;
+
+
+
+    leaf tcp-adv-dl {
+
+      type uint32;
+
+      units nanoseconds;
+
+      mandatory true;
+
+      description
+
+        "the time difference (advance) between the reception window for
+
+        downlink real time Control messages and reception window for the
+
+        corresponding IQ data messages.";
+
+    }
+
+
+
+    uses ta3;
+
+    uses t2a-cp-ul;
+
+  }
+
+
+
+  grouping o-du-delay-profile {
+
+    description
+
+      "Grouping for O-DU delay profile";
+
+
+
+    leaf t1a-max-up {
+
+      type uint32;
+
+      units nanoseconds;
+
+      description
+
+        "the earliest possible time which the O-DU can support transmiting
+
+        an IQ data message prior to transmission of the corresponding IQ
+
+        samples at the antenna";
+
+    }
+
+    leaf tx-max {
+
+      type uint32;
+
+      units nanoseconds;
+
+      description
+
+        "The maximum amount of time which the O-DU requires to transmit
+
+        all downlink user plane IQ data message for a symbol";
+
+    }
+
+    leaf ta4-max {
+
+      type uint32;
+
+      units nanoseconds;
+
+      description
+
+        "the latest possible time which the O-DU can support receiving the
+
+        last uplink user plane IQ data message for a symbol.";
+
+    }
+
+    leaf rx-max {
+
+      type uint32;
+
+      units nanoseconds;
+
+      description
+
+        "The maximum time difference the O-DU can support between
+
+        receiving the first user plane IQ data message for a symbol and
+
+        receiving the last user plane IQ data message for the same symbol";
+
+    }
+
+  }
+
+
+
+  grouping t12 {
+
+    description
+
+      "Grouping for t12";
+
+
+
+    leaf t12-min {
+
+      type uint32;
+
+      units nanoseconds;
+
+      description
+
+        "the minimum measured delay between DU port-ID and O-RU port-ID";
+
+    }
+
+// additional leaf added by Samsung
+
+    leaf t12-max {
+
+      type uint32;
+
+      units nanoseconds;
+
+      description
+
+        "the maximum measured delay between CU port-ID and O-RU port-ID";
+
+    }
+
+  }
+
+
+
+  grouping t34 {
+
+    description
+
+      "Grouping for t34";
+
+
+
+    leaf t34-min {
+
+      type uint32;
+
+      units nanoseconds;
+
+      description
+
+        "the minimum measured delay between O-RU port-ID and CU port-ID";
+
+    }
+
+// additional leaf added by Samsung
+
+    leaf t34-max {
+
+      type uint32;
+
+      units nanoseconds;
+
+      description
+
+        "the maximum measured delay between O-RU port-ID and CU port-ID";
+
+    }
+
+  }
+
+
+
+  grouping delay-management-group {
+
+    list bandwidth-scs-delay-state {
+
+      key "bandwidth subcarrier-spacing";
+
+      description
+
+        "Array of structures containing sets of parameters for delay management.";
+
+
+
+      uses bandwidth-configuration;
+
+
+
+      container ru-delay-profile {
+
+        config false;
+
+        description "container for O-RU delay parameters";
+
+
+
+        uses ru-delay-profile;
+
+      }
+
+    }
+
+
+
+    container adaptive-delay-configuration {
+
+      if-feature ADAPTIVE-RU-PROFILE;
+
+      description "container for adaptive delay parameters";
+
+      list bandwidth-scs-delay-state {
+
+        key "bandwidth subcarrier-spacing";
+
+        description
+
+          "Array of structures containing sets of parameters for delay management.";
+
+
+
+        uses bandwidth-configuration;
+
+
+
+        container o-du-delay-profile {
+
+          description
+
+            "O-DU provided delay profile for adaptive delay configuration";
+
+
+
+          uses o-du-delay-profile;
+
+        }
+
+      }
+
+
+
+      container transport-delay {
+
+        description
+
+          "O-DU provided transport-delay parameters";
+
+        uses t12;
+
+        uses t34;
+
+      }
+
+    }
+
+  }
+
+  container delay-management {
+
+    description "top level tree covering off O-DU to O-RU delay management";
+
+
+
+    uses delay-management-group;
+
+  }
+
+}
+module o-ran-shared-cell {
+
+  yang-version 1.1;
+
+  namespace "urn:o-ran:shared-cell:1.0";
+
+  prefix "o-ran-sc";
+
+
+
+  import o-ran-compression-factors {
+
+    prefix "cf";
+
+  }
+
+  import o-ran-processing-element {
+
+    prefix "o-ran-pe";
+
+    revision-date 2020-04-17;
+
+  }
+
+
+
+  organization "O-RAN Alliance";
+
+
+
+  contact
+
+    "www.o-ran.org";
+
+
+
+  description
+
+    "This module defines the YANG definitions for shared cell capable O-RU (Cascade and FHM).
+
+
+
+    Copyright 2020 the O-RAN Alliance.
+
+
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS'
+
+    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+
+    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+
+    ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+
+    LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+
+    CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+
+    SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+
+    INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+
+    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+
+    POSSIBILITY OF SUCH DAMAGE.
+
+
+
+    Redistribution and use in source and binary forms, with or without
+
+    modification, are permitted provided that the following conditions are met:
+
+
+
+    * Redistributions of source code must retain the above copyright notice,
+
+    this list of conditions and the above disclaimer.
+
+    * Redistributions in binary form must reproduce the above copyright notice,
+
+    this list of conditions and the above disclaimer in the documentation
+
+    and/or other materials provided with the distribution.
+
+    * Neither the Members of the O-RAN Alliance nor the names of its
+
+    contributors may be used to endorse or promote products derived from
+
+    this software without specific prior written permission.";
+
+
+
+  revision "2020-04-17" {
+
+    description
+
+      "version 3.0.0
+
+
+
+      1) initial version for shared cell O-RU related yang module.";
+
+
+
+    reference "ORAN-WG4.M.0-v03.00";
+
+  }
+
+
+
+  feature FHM {
+
+    description
+
+      "Presence of feature indicates that O-RU acts as FHM and doesn't have
+
+       the capability of radio transmission and reception. Absence of feature
+
+       indicates that O-RU does not act as FHM and supports radio transmission
+
+       and reception function.";
+
+  }
+
+
+
+  // radio offsets
+
+  grouping radio-offset {
+
+    description
+
+      "shared cell FHM mode needs the configuration for radio related offset";
+
+    leaf downlink-radio-frame-offset {
+
+      type uint32 {
+
+        range 0..12288000;
+
+      }
+
+      mandatory true;
+
+
+
+      description
+
+        "This parameter is used for offsetting the starting position of
+
+         10ms radio frame.
+
+         Note: Unit is 1/1.2288e9 sec.";
+
+    }
+
+
+
+    leaf downlink-sfn-offset {
+
+      type int16 {
+
+        range -32768..32767;
+
+      }
+
+      mandatory true;
+
+
+
+      description
+
+        "This parameter is used for offsetting SFN value.
+
+        Unit is 10ms.";
+
+    }
+
+  }
+
+
+
+  // shared cell capability
+
+  grouping shared-cell-module-capability{
+
+    description
+
+      "shared cell related module capability of O-RU";
+
+    container shared-cell-module-cap {
+
+      config false;
+
+      description
+
+      "indicates shared cell specific module capability";
+
+
+
+      leaf t-copy {
+
+        type uint32;
+
+        units nanoseconds;
+
+        mandatory true;
+
+        description
+
+          "Corresponding to the maximum FHM or cascade O-RU processing delay
+
+           between receiving an IQ sample over the fronthaul interface from
+
+           the north-node, coping it and transmitting it over the fronthaul
+
+           interface to the south-node.";
+
+      }
+
+
+
+      leaf t-combine {
+
+        type uint32;
+
+        units nanoseconds;
+
+        mandatory true;
+
+        description
+
+          "Corresponding to the maximum FHM or cascade O-RU processing delay
+
+           between receiving an IQ sample over the fronthaul interface from
+
+           the south-node(s), combing them and transmitting it over the
+
+           fronthaul interface to the north-node.";
+
+      }
+
+
+
+      leaf ta3-prime-max-upper-range {
+
+        type uint32;
+
+        units nanoseconds;
+
+        mandatory true;
+
+        description
+
+          "The upper limit for the configurable ta3-prime-max value.
+
+           This is the capability information of O-RU that comes from
+
+           the O-RU internal memory for the combine operation.";
+
+      }
+
+
+
+      leaf max-number-node-copy-and-combine {
+
+        type uint8{
+
+          range "1..max";
+
+        }
+
+        mandatory true;
+
+        description
+
+          "Indicates the maximum number of south-node for the copy-and-combine
+
+           functions of cascade O-RU or FHM.
+
+           For cascade mode, this value is one. It means
+
+           O-RU copies the stream of eCPRI messages only once for the connected
+
+           south-node and copied stream are forwarded to the south-node.
+
+           Similarly, the cascade O-RU combines once for the streams of
+
+           eCPRI messages received from the south node and the streams of radio
+
+           reception function.
+
+           For FHM mode, FHM is able to copy the stream of eCPRI messages
+
+           according to this parameter and forward each copied stream
+
+           to each south-node. FHM is able to combine the streams of eCPRI
+
+           messages received from the multiple south-nodes corresponding to
+
+           this parameter at most.";
+
+      }
+
+
+
+      leaf max-number-eaxcid-copy {
+
+        type uint8{
+
+          range "1..max";
+
+        }
+
+        mandatory true;
+
+        description
+
+          "Indicates the maximum number of eaxc-ids for the copy functions
+
+           of cascade O-RU or FHM.
+
+           For Cascade, it is same number of static-low-level-tx-endpoints plus
+
+           static-low-level-rx-endpoints, for which low-level-tx(rx)-endpoints
+
+           are configured with eaxc-id in u-plane configuration.
+
+           For FHM, it is max configurable number of eaxc-ids in
+
+           tx-eaxc-id and rx-eaxc-id in shared-cell-copy-uplane-config.";
+
+      }
+
+
+
+      leaf max-number-eaxcid-combine {
+
+        type uint8{
+
+          range "1..max";
+
+        }
+
+        mandatory true;
+
+        description
+
+          "Indicates the maximum number of eaxc-ids for the combine functions
+
+           of cascade O-RU or FHM.
+
+           For Cascade, it is same number of static-low-level-rx-endpoints,
+
+           for which low-level-rx-endpoints are configured with eaxc-id in
+
+           u-plane configuration.
+
+           For FHM, it is max configurable number of eaxc-ids in rx-eaxc-id
+
+           in shared-cell-combine-uplane-config.";
+
+      }
+
+
+
+      list compression-method-supported {
+
+        if-feature FHM;
+
+        description
+
+          "List of supported compression methods for FHM";
+
+        uses cf:compression-details;
+
+      }
+
+    }
+
+  }
+
+
+
+  // shared cell mode configuration
+
+  grouping shared-cell-mode{
+
+    description
+
+      "A grouping defining the schema nodes for shared cell configuration";
+
+    choice shared-cell-copy-combine-mode {
+
+      case COMMON {
+
+        description
+
+         "all eCPRI payload are the target for copy and combine functions.
+
+          Common set of eaxc-ids are used in O-RU in the shared cell network.
+
+          For cascade mode, eaxc-ids of low-level-tx(rx)-links in
+
+          o-ran-uplane-configuration that has relation to the
+
+          processing-element are used.
+
+          For FHM mode, eaxc-ids of shared-cell-copy-uplane-config and
+
+          those of shared-cell-combine-config are used.";
+
+
+
+          uses shared-cell-copy-configuration;
+
+          uses shared-cell-combine-configuration;
+
+      }
+
+      case SELECTIVE {
+
+        description "for future use";
+
+      }
+
+      description
+
+       "configuration mode can be selected.
+
+        In this release, COMMON case is only supported.";
+
+    }
+
+  }
+
+
+
+  // processing elements set
+
+  grouping processing-element-set{
+
+    description
+
+      "shared-cell-copy/combine-configuration refers the pair of processing
+
+      element set of a north-node and a south-node.";
+
+
+
+    leaf north-node-processing-element{
+
+      type leafref {
+
+        path "/o-ran-pe:processing-elements/o-ran-pe:ru-elements/o-ran-pe:name";
+
+        }
+
+      description
+
+        "north-node processing element indicates the set of
+
+         'north-node-mac-address', 'ru-mac-address' and 'vlan-id' in case
+
+         north-eth-flow is selected for the transport flow.";
+
+    }
+
+
+
+    leaf-list south-node-processing-elements{
+
+      type leafref {
+
+        path "/o-ran-pe:processing-elements/o-ran-pe:ru-elements/o-ran-pe:name";
+
+      }
+
+      description
+
+        "south-node processing elements indicate the sets of
+
+         'south-node-mac-address', 'ru-mac-address' and 'vlan-id' in case
+
+          south-eth-flow is selected for the transport flow.";
+
+    }
+
+  } // processing-element-set
+
+
+
+  // shared cell copy and combine config
+
+  grouping shared-cell-copy-configuration{
+
+    description
+
+      "shared-cell-copy-configuration";
+
+    list shared-cell-copy-entities{
+
+      key name;
+
+      description
+
+        "copy entity. The north-node is an O-DU or an O-RU.
+
+         The south-nodes are O-RUs.
+
+         The number of south-nodes is at most one for cascade O-RU and
+
+         more than one for FHM";
+
+
+
+      leaf name{
+
+        type string;
+
+        description
+
+         "the name of shared-cell-copy-entity.";
+
+      }
+
+
+
+      uses processing-element-set;
+
+
+
+      container shared-cell-copy-uplane-config {
+
+        if-feature FHM;
+
+        description
+
+          "Container consists of uplane-info for copy-configuration for FHM.";
+
+
+
+        list tx-eaxc-id {
+
+          key eaxc-id;
+
+          description
+
+            "used for low-level-tx-endpoints to copy";
+
+
+
+          leaf eaxc-id {
+
+            type uint16;
+
+            description
+
+              "encoded value of eaxcid to be read by CU-Plane";
+
+          }
+
+      }
+
+        list rx-eaxc-id {
+
+          key eaxc-id;
+
+          description
+
+            "used for low-level-rx-endpoints to copy";
+
+
+
+          leaf eaxc-id {
+
+            type uint16;
+
+            description
+
+              "encoded value of eaxcid to be read by CU-Plane";
+
+          }
+
+        }
+
+        uses radio-offset;
+
+      }
+
+
+
+    } // shared-cell-copy-entities
+
+  } // shared-cell-copy-configuration (groupings)
+
+
+
+  grouping shared-cell-combine-configuration{
+
+    description
+
+      "shared-cell-combine-configuration";
+
+
+
+    list shared-cell-combine-entities{
+
+      key name;
+
+      description
+
+        "combine configuration. The north-node is O-DU or O-RU.
+
+         The south-nodes are O-RUs.
+
+         The number of south-nodes is at most one for cascade O-RU and
+
+         more than one for FHM";
+
+
+
+      leaf name{
+
+        type string;
+
+        description
+
+         "name of shared-cell-combine-entity";
+
+      }
+
+
+
+      uses processing-element-set;
+
+
+
+      leaf ta3-prime-max {
+
+        type uint32;
+
+        units nanoseconds;
+
+        description
+
+          "indicates the latest time that FHM or cascade O-RU is allowed to
+
+           send UL U-plane message to north-node relative to reception
+
+           timing at O-RU antenna.";
+
+      }
+
+
+
+      uses shared-cell-combine-uplane-config;
+
+    }
+
+  }
+
+
+
+  grouping shared-cell-combine-uplane-config{
+
+    description
+
+      "shared cell related uplane configuration applicable to O-RU which
+
+       doesn't have radio transmisison capability";
+
+    container shared-cell-combine-uplane-config {
+
+      if-feature FHM;
+
+      description
+
+        "when O-RU doesn't have radio transmisison availability for FHM mode,
+
+         the required u-plane configuration for copy and combine function
+
+         are defined, instead of the lists of o-ran-uplane-conf.yang";
+
+
+
+      list rx-eaxc-id {
+
+        key eaxc-id;
+
+        description
+
+          "used for low-level-rx-endpoints to combine";
+
+        leaf eaxc-id {
+
+          type uint16;
+
+          description
+
+            "encoded value of eaxc-id to be read by CU-Plane";
+
+        }
+
+        container comression-method {
+
+          description
+
+            "for combine mechanism, compression method per eaxc-id applied in
+
+             south-node is known to FHM ";
+
+          uses cf:compression-details;
+
+        }
+
+      }
+
+
+
+      uses radio-offset;
+
+
+
+      leaf n-ta-offset {
+
+        type uint32;
+
+        units Tc;
+
+        mandatory true;
+
+        description
+
+          "Value of configurable N-TA offset
+
+          units are Tc=~0.5ns=1/1.96608GHz";
+
+      }
+
+
+
+      leaf  number-of-prb {
+
+        type uint16;
+
+        mandatory true;
+
+        description
+
+          "Determines max number of PRBs that will be used in all sections
+
+          per one symbol.
+
+          This value is used only when uplink C-plane message indicates that
+
+          all PRB is used in the field of numPrbc";
+
+      }
+
+    }
+
+  }
+
+
+
+// top level container
+
+  container shared-cell{
+
+    description
+
+      "This container for shared-cell consists of capability information and
+
+       configurable parameters";
+
+    uses shared-cell-module-capability;
+
+
+
+    container shared-cell-config {
+
+      description "configuration for shared cell.";
+
+      uses shared-cell-mode;
+
+    }
+
+  }
+
+}
+module qucell-o1-interface {
+
+  yang-version 1.1;
+
+  namespace "urn:qucell:o1-interface:1.0";
+
+  prefix "qucell-o1-int";
+
+
+
+
+
+    
+
+  import ietf-interfaces {
+
+    prefix "if";
+
+  }
+
+    
+
+  import ietf-netconf-acm {
+
+    prefix nacm;
+
+    reference
+
+      "RFC 8341: Network Configuration Access Control Model";
+
+  }
+
+  
+
+  import ietf-inet-types {
+
+    prefix inet;
+
+  }
+
+  
+
+  organization
+
+    "Qucell Networks Co., Ltd.";
+
+	
+
+  contact
+
+    "";
+
+	
+
+  description
+
+    "This modules contains YANG definitions for O1 interface.";
+
+    
+
+  revision 2020-04-27 {
+
+    description
+
+	  "Initial revision";
+
+  }
+
+     
+
+  grouping ves-listener-config {
+
+    description
+
+	  "A reusable grouping for VES listener configuration";
+
+	  
+
+    leaf server-root {
+
+	  type inet:uri;
+
+	  mandatory true;
+
+		description
+
+		  "Server root of VES listener. ServerRoot = https://{Domain|IP}:{Port}/{optionalRoutingPath}";
+
+	  }
+
+		
+
+	leaf username {
+
+	  nacm:default-deny-write;
+
+	  type string;
+
+	  description
+
+	    "The username for the HTTP basic authentication.";
+
+	}
+
+		
+
+	leaf password {
+
+	  nacm:default-deny-all;
+
+	  type string;
+
+	  description
+
+	    "The password for the HTTP basic authenticaiton.";
+
+	}
+
+
+
+	container tls-client-config {
+
+	  nacm:default-deny-write;
+
+	  description
+
+	    "Nodes for TLS client configuration.
+
+		Currently configuration for mutual authentication is specified. Nodes for TLS hello parameters configuration (TLS version, cipher suites) may be added in the future.";
+
+	  
+
+	  container client-identity {
+
+	    description
+
+		  "Specifies certificate and corresponding private key used to identify TLS client";
+
+		
+
+		leaf certificate {
+
+		  type string;
+
+		  description
+
+		    "Identifier or reference for a specific certificate in the device";
+
+		}
+
+		  
+
+		leaf private-key {
+
+		  type string;
+
+		  description
+
+		    "Identifier or reference for a specific private key in the decive";
+
+		}
+
+	  }
+
+	  
+
+	  leaf-list ca-certs {
+
+	    type string;
+
+	    description
+
+		  "Identifier or reference for the certificate authority (CA) certificates used by the TLS client to authenticate TLS server certificates. A server certificate is authenticated if it has a valid chain of trust to a configured CA certificate.";
+
+	  }
+
+	}
+
+  }
+
+  
+
+  container o1-interface {
+
+    description
+
+	  "Nodes for O1 interface";
+
+
+
+	container nf-info {
+
+	  description
+
+	    "Nodes for NF information";
+
+	  
+
+	  leaf nf-type {
+
+		type enumeration {
+
+		  enum Cu {
+
+		    description
+
+			  "Indicates type of this NF is CU.";
+
+		  }
+
+		  enum Du {
+
+		    description
+
+			  "Indicates type of this NF is DU.";
+
+		  }
+
+		}
+
+		config false;
+
+		mandatory true;
+
+		description
+
+		  "NF type e.g. CU, DU. The value of this leaf is used for NfName which is one of subfields of PublisherName in VES eventName.";
+
+	  }
+
+	
+
+	  leaf nf-id {
+
+		type string;
+
+		config false;
+
+		mandatory true;
+
+	    description
+
+	      "Unique identifer for each NFs. The value of this leaf is used for reportingEntityName and sourceName in VES commonEventHeader.";
+
+	  }
+
+	  
+
+	  leaf dn {
+
+	    type string;
+
+		description
+
+		  "Distinguished Name of NF. DN is used to identify managed element(NF) in 3GPP MnS.";
+
+	  }
+
+	  
+
+	  leaf service-configuration {
+
+		type enumeration {
+
+		  enum need-to-configure {
+
+		    description
+
+			  "Indicates PNF needs service configuration to initiate service.
+
+			  PNF sends pnfRegistration event periodically until service configuration is done. In this case, PNF stays in the unregistered state.";
+
+		  }
+
+		  enum done {
+
+		    description
+
+			  "Indicates service configuration from the EMS has been finished. PNF moves to the registered state.";
+
+		  }
+
+		}
+
+		description
+
+		  "Indicates service configuration from the EMS is done or not.";
+
+	  }
+
+	  
+
+	  leaf registration-state {
+
+		type enumeration {
+
+		  enum unregistered {
+
+		    description
+
+			  "PNF is in unregistered state.
+
+			  In unregistered state, only pnfRegistration event is transmitted.";
+
+		  }
+
+		  enum registered {
+
+		    description
+
+			  "PNF is in registered state.
+
+			  The events except pnfRegistration are transmitted only when PNF is in registered state.";
+
+		  }
+
+		}
+
+		config false;
+
+		description
+
+		  "Registration state of PNF";
+
+	  }
+
+
+
+	  leaf local-endpoint {
+
+	    type union {
+
+		  type leafref {
+
+		    path "/if:interfaces/if:interface/if:name";
+
+	      }
+
+		  type inet:ip-address;
+
+		}
+
+		description
+
+		  "The local interface/IP address to bind for when connecting to the VES listener.
+
+		  If this leaf is not configured, it is automatically configured based on the DHCP server which provided the VES listener discovery.";
+
+	  }
+
+	}
+
+	
+
+	container ves-listeners {
+
+	  description
+
+	    "Nodes for VES listeners";
+
+	
+
+	  leaf active-listener {
+
+		type enumeration {
+
+		  enum primary {
+
+		    description
+
+			  "Indicates current active listner is primary VES listener.";
+
+		  }
+
+		  enum secondary {
+
+		    description
+
+			  "Indicats current active listner is secondary VES listener.";
+
+		  }
+
+		  enum none {
+
+		    description
+
+			  "Indicates both primary and secondary listener are disconnected.
+
+			  The PNF tries to send pnfRegistaration to the VES listener.";
+
+		  }
+
+		}
+
+		config false;
+
+		description
+
+		  "Indicates current active VES listener. The VES event is transfered to the active listener.";
+
+	  }
+
+	  
+
+	  container primary-ves-listener {
+
+	    presence
+
+		  "Indicates that the NF supports communication with VES listener.";
+
+	    description
+
+		  "Nodes for primary VES listener";
+
+		uses ves-listener-config;
+
+	  }
+
+	  
+
+	  container secondary-ves-listener {
+
+	    presence
+
+		  "Indicates that the NF supports switch over to the secondary VES listener for the case when the primary VES listener is not available.";
+
+	    description
+
+		  "Nodes for secondary VES listener";
+
+		uses ves-listener-config;
+
+	  }
+
+	}
+
+	
+
+	container ves-retry-policy {
+
+	  description
+
+	    "Nodes for VES event retransmission policy";
+
+		
+
+	  leaf pnf-reg-timer {
+
+	    type uint16 {
+
+		  range "1..max";
+
+		}
+
+		units minutes;
+
+		default 5;
+
+		description
+
+		  "This timer is triggered when the PNF registration is initiated. After successful PNF registration this timer is stopped.
+
+		  If PNF registration is not completeted until this timer is exhausted, the PNF restarts PNF registration, and the timer starts again. For the successful PNF registration, this timer shall be have enough time interval.";
+
+	  }
+
+	  
+
+	  leaf heartbeat-period {
+
+		type uint16;
+
+		units seconds;
+
+		default 60;
+
+		description
+
+		  "Period of heartbeat notification emission. The value of zero has the special meaning of stopping the heartbeat notification emission.";
+
+      }
+
+	  
+
+	  container event-retransmission {
+
+	    description
+
+		  "Specifies configuration about event retransmission.";
+
+		  
+
+	    leaf ack-timeout {
+
+	      type uint16 {
+
+		    range "1..max";
+
+		  }
+
+		  units seconds;
+
+		  default 5;
+
+		  description
+
+		    "Time interval that NF waits the response from the VES listener";
+
+	    }
+
+	  
+
+	    leaf max-attempts {
+
+	      type uint16;
+
+		  default 3;
+
+		  description
+
+		    "Max retry number for event re-transmission";
+
+	    }
+
+	  
+
+	    leaf retry-interval {
+
+	      type uint16 {
+
+		    range "1..max";
+
+		  }
+
+		  units seconds;
+
+		  default 5;
+
+		  description
+
+		    "Failed event is retransmitted after waiting for the time configured by this leaf.";
+
+	    }
+
+	  }
+
+	}
+
+	
+
+	container ves-event-buffer {
+
+	  description
+
+	    "Nodes for buffer configuration";
+
+		
+
+	  leaf max-buffered-time {
+
+	    type uint16;
+
+		units minutes;
+
+		default 60;
+
+		description
+
+		  "Indicates maximum period that events are queued. The event exceeded this time limit is discarded.";
+
+	  }
+
+	  
+
+	  leaf max-buffered-events {
+
+	    type uint16;
+
+		description
+
+		  "Indicates maximum number of events that buffer can save. If the buffer is exceeded this limit, the oldest event is discarded in the manner of FIFO (First In First Out).";
+
+	  }
+
+	}
+
+  }
+
+}
+module ietf-yang-library {
+
+  namespace "urn:ietf:params:xml:ns:yang:ietf-yang-library";
+
+  prefix "yanglib";
+
+
+
+  import ietf-yang-types {
+
+    prefix yang;
+
+  }
+
+  import ietf-inet-types {
+
+    prefix inet;
+
+  }
+
+
+
+  organization
+
+    "IETF NETCONF (Network Configuration) Working Group";
+
+
+
+  contact
+
+    "WG Web:   <https://datatracker.ietf.org/wg/netconf/>
+
+     WG List:  <mailto:netconf@ietf.org>
+
+     WG Chair: Mehmet Ersue
+
+               <mailto:mehmet.ersue@nsn.com>
+
+     WG Chair: Mahesh Jethanandani
+
+               <mailto:mjethanandani@gmail.com>
+
+     Editor:   Andy Bierman
+
+               <mailto:andy@yumaworks.com>
+
+     Editor:   Martin Bjorklund
+
+               <mailto:mbj@tail-f.com>
+
+     Editor:   Kent Watsen
+
+               <mailto:kwatsen@juniper.net>";
+
+
+
+  description
+
+    "This module contains monitoring information about the YANG
+
+     modules and submodules that are used within a YANG-based
+
+     server.
+
+     Copyright (c) 2016 IETF Trust and the persons identified as
+
+     authors of the code.  All rights reserved.
+
+     Redistribution and use in source and binary forms, with or
+
+     without modification, is permitted pursuant to, and subject
+
+     to the license terms contained in, the Simplified BSD License
+
+     set forth in Section 4.c of the IETF Trust's Legal Provisions
+
+     Relating to IETF Documents
+
+     (http://trustee.ietf.org/license-info).
+
+     This version of this YANG module is part of RFC 7895; see
+
+     the RFC itself for full legal notices.";
+
+
+
+  revision 2016-06-21 {
+
+    description
+
+      "Initial revision.";
+
+    reference
+
+      "RFC 7895: YANG Module Library.";
+
+  }
+
+
+
+  /*
+
+   * Typedefs
+
+   */
+
+
+
+  typedef revision-identifier {
+
+    type string {
+
+      pattern '\d{4}-\d{2}-\d{2}';
+
+    }
+
+    description
+
+      "Represents a specific date in YYYY-MM-DD format.";
+
+  }
+
+
+
+  /*
+
+   * Groupings
+
+   */
+
+
+
+  grouping module-list {
+
+    description
+
+      "The module data structure is represented as a grouping
+
+       so it can be reused in configuration or another monitoring
+
+       data structure.";
+
+
+
+    grouping common-leafs {
+
+      description
+
+        "Common parameters for YANG modules and submodules.";
+
+
+
+      leaf name {
+
+        type yang:yang-identifier;
+
+        description
+
+          "The YANG module or submodule name.";
+
+      }
+
+      leaf revision {
+
+        type union {
+
+          type revision-identifier;
+
+          type string { length 0; }
+
+        }
+
+        description
+
+          "The YANG module or submodule revision date.
+
+           A zero-length string is used if no revision statement
+
+           is present in the YANG module or submodule.";
+
+      }
+
+    }
+
+
+
+    grouping schema-leaf {
+
+      description
+
+        "Common schema leaf parameter for modules and submodules.";
+
+
+
+      leaf schema {
+
+        type inet:uri;
+
+        description
+
+          "Contains a URL that represents the YANG schema
+
+           resource for this module or submodule.
+
+           This leaf will only be present if there is a URL
+
+           available for retrieval of the schema for this entry.";
+
+      }
+
+    }
+
+
+
+    list module {
+
+      key "name revision";
+
+      description
+
+        "Each entry represents one revision of one module
+
+         currently supported by the server.";
+
+
+
+      uses common-leafs;
+
+      uses schema-leaf;
+
+
+
+      leaf namespace {
+
+        type inet:uri;
+
+        mandatory true;
+
+        description
+
+          "The XML namespace identifier for this module.";
+
+      }
+
+      leaf-list feature {
+
+        type yang:yang-identifier;
+
+        description
+
+          "List of YANG feature names from this module that are
+
+           supported by the server, regardless of whether they are
+
+           defined in the module or any included submodule.";
+
+      }
+
+      list deviation {
+
+        key "name revision";
+
+        description
+
+          "List of YANG deviation module names and revisions
+
+           used by this server to modify the conformance of
+
+           the module associated with this entry.  Note that
+
+           the same module can be used for deviations for
+
+           multiple modules, so the same entry MAY appear
+
+           within multiple 'module' entries.
+
+           The deviation module MUST be present in the 'module'
+
+           list, with the same name and revision values.
+
+           The 'conformance-type' value will be 'implement' for
+
+           the deviation module.";
+
+        uses common-leafs;
+
+      }
+
+      leaf conformance-type {
+
+        type enumeration {
+
+          enum implement {
+
+            description
+
+              "Indicates that the server implements one or more
+
+               protocol-accessible objects defined in the YANG module
+
+               identified in this entry.  This includes deviation
+
+               statements defined in the module.
+
+               For YANG version 1.1 modules, there is at most one
+
+               module entry with conformance type 'implement' for a
+
+               particular module name, since YANG 1.1 requires that,
+
+               at most, one revision of a module is implemented.
+
+               For YANG version 1 modules, there SHOULD NOT be more
+
+               than one module entry for a particular module name.";
+
+          }
+
+          enum import {
+
+            description
+
+              "Indicates that the server imports reusable definitions
+
+               from the specified revision of the module but does
+
+               not implement any protocol-accessible objects from
+
+               this revision.
+
+               Multiple module entries for the same module name MAY
+
+               exist.  This can occur if multiple modules import the
+
+               same module but specify different revision dates in
+
+               the import statements.";
+
+          }
+
+        }
+
+        mandatory true;
+
+        description
+
+          "Indicates the type of conformance the server is claiming
+
+           for the YANG module identified by this entry.";
+
+      }
+
+      list submodule {
+
+        key "name revision";
+
+        description
+
+          "Each entry represents one submodule within the
+
+           parent module.";
+
+        uses common-leafs;
+
+        uses schema-leaf;
+
+      }
+
+    }
+
+  }
+
+
+
+  /*
+
+   * Operational state data nodes
+
+   */
+
+
+
+  container modules-state {
+
+    config false;
+
+    description
+
+      "Contains YANG module monitoring information.";
+
+
+
+    leaf module-set-id {
+
+      type string;
+
+      mandatory true;
+
+      description
+
+        "Contains a server-specific identifier representing
+
+         the current set of modules and submodules.  The
+
+         server MUST change the value of this leaf if the
+
+         information represented by the 'module' list instances
+
+         has changed.";
+
+    }
+
+
+
+    uses module-list;
+
+  }
+
+
+
+  /*
+
+   * Notifications
+
+   */
+
+
+
+  notification yang-library-change {
+
+    description
+
+      "Generated when the set of modules and submodules supported
+
+       by the server has changed.";
+
+    leaf module-set-id {
+
+      type leafref {
+
+        path "/yanglib:modules-state/yanglib:module-set-id";
+
+      }
+
+      mandatory true;
+
+      description
+
+        "Contains the module-set-id value representing the
+
+         set of modules and submodules supported at the server at
+
+         the time the notification is generated.";
+
+    }
+
+  }
+
+
+
+}
+module o-ran-ethernet-forwarding {
+
+  yang-version 1.1;
+
+  namespace "urn:o-ran:ethernet-fwd:1.0";
+
+  prefix "o-ran-eft";
+
+
+
+  import ietf-yang-types {
+
+    prefix "yang";
+
+  }
+
+
+
+  import o-ran-interfaces {
+
+    prefix "or-if";
+
+  }
+
+
+
+  import ietf-interfaces {
+
+    prefix "if";
+
+  }
+
+
+
+  organization "O-RAN Alliance";
+
+
+
+  contact
+
+    "www.o-ran.org";
+
+
+
+  description
+
+    "This module defines the Ethernet forwarding table of an O-RU.
+
+    This is an option capability used when supporting 'shared cell' operation.
+
+
+
+    Copyright 2020 the O-RAN Alliance.
+
+
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS'
+
+    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+
+    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+
+    ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+
+    LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+
+    CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+
+    SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+
+    INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+
+    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+
+    POSSIBILITY OF SUCH DAMAGE.
+
+
+
+    Redistribution and use in source and binary forms, with or without
+
+    modification, are permitted provided that the following conditions are met:
+
+
+
+    * Redistributions of source code must retain the above copyright notice,
+
+    this list of conditions and the above disclaimer.
+
+    * Redistributions in binary form must reproduce the above copyright notice,
+
+    this list of conditions and the above disclaimer in the documentation
+
+    and/or other materials provided with the distribution.
+
+    * Neither the Members of the O-RAN Alliance nor the names of its
+
+    contributors may be used to endorse or promote products derived from
+
+    this software without specific prior written permission.";
+
+
+
+  revision "2020-02-05" {
+
+    description
+
+      "version 3.0.0
+
+
+
+      Initial version";
+
+
+
+    reference "ORAN-WG4.M.0-v03.00";
+
+  }
+
+
+
+  grouping ethernet-ft {
+
+    description
+
+      "Ethernet forwarding table.";
+
+
+
+    leaf aging-time {
+
+      type uint32 {
+
+        range "10..10000000";
+
+      }
+
+      units "seconds";
+
+      default "300";
+
+      description
+
+        "The timeout period in seconds for aging out
+
+        dynamically-learned forwarding information.";
+
+    }
+
+
+
+    list filtering-entry {
+
+      key "address vlan-id";
+
+      config false;
+
+      description
+
+        "List of the entries within the Ethernet forwarding table.
+
+        This list is keyed by the MAC address and VLAN of the Ethernet frame.";
+
+
+
+      leaf address {
+
+        type yang:mac-address;
+
+        description
+
+          "A MAC address (unicast, multicast, broadcast) for
+
+          which the device has forwarding and/or filtering
+
+          information.";
+
+      }
+
+
+
+      leaf vlan-id {
+
+        type uint16 {
+
+          range "0..4094";
+
+        }
+
+        description
+
+          "VLAN-ID entry in the forwarding table, used during the
+
+          look-up when receiving an in-coming Ethernet frame to determine
+
+          how to forward.
+
+
+
+          A value of 0 indicates that the filtering entry is for an un-tagged
+
+          frame/MAC address";
+
+      }
+
+
+
+      list port-map {
+
+        key "port-ref";
+
+        description
+
+          "The list of entries composing the port map.";
+
+        leaf port-ref {
+
+          type leafref {
+
+            path "/if:interfaces/if:interface/or-if:port-reference/or-if:port-number";
+
+            }
+
+          description
+
+            "The interface port reference associated with this map.";
+
+        }
+
+      }
+
+    }
+
+  }
+
+
+
+  container ethernet-forwarding-table {
+
+    description "Top level container defining forwarding tables for Ethernet";
+
+
+
+    uses ethernet-ft;
+
+  }
+
+
+
+}
+module o-ran-laa-operations {
+
+  yang-version 1.1;
+
+  namespace "urn:o-ran:laa-operations:1.0";
+
+  prefix "o-ran-laa-operations";
+
+
+
+  import o-ran-module-cap {
+
+    prefix "mcap";
+
+  }
+
+
+
+  organization "O-RAN Alliance";
+
+
+
+  contact
+
+    "www.o-ran.org";
+
+
+
+  description
+
+    "This module defines the operations for DFS measurement.
+
+
+
+    Copyright 2019 the O-RAN Alliance.
+
+
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS'
+
+    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+
+    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+
+    ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+
+    LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+
+    CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+
+    SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+
+    INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+
+    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+
+    POSSIBILITY OF SUCH DAMAGE.
+
+
+
+    Redistribution and use in source and binary forms, with or without
+
+    modification, are permitted provided that the following conditions are met:
+
+
+
+    * Redistributions of source code must retain the above copyright notice,
+
+    this list of conditions and the above disclaimer.
+
+    * Redistributions in binary form must reproduce the above copyright notice,
+
+    this list of conditions and the above disclaimer in the documentation
+
+    and/or other materials provided with the distribution.
+
+    * Neither the Members of the O-RAN Alliance nor the names of its
+
+    contributors may be used to endorse or promote products derived from
+
+    this software without specific prior written permission.";
+
+
+
+  revision "2019-07-03" {
+
+    description
+
+      "version 1.1.0
+
+
+
+      1) corrected error in module reference for LAA feature";
+
+
+
+    reference "ORAN-WG4.M.0-v01.00";
+
+  }
+
+
+
+  revision "2019-02-04" {
+
+    description
+
+      "version 1.0.0
+
+
+
+      1) imported model from xRAN
+
+      2) changed namespace and reference from xran to o-ran";
+
+
+
+    reference "ORAN-WG4.M.0-v01.00";
+
+  }
+
+
+
+  typedef band-num {
+
+    type enumeration {
+
+      enum BAND_46_SUBBAND_A {
+
+        description
+
+          "46a: 5150 MHz 	-	5250 MHz";
+
+      }
+
+      enum BAND_46_SUBBAND_B {
+
+        description
+
+          "46b: 5250 MHz 	-	5350 MHz";
+
+      }
+
+      enum BAND_46_SUBBAND_C {
+
+        description
+
+          "46c: 5470 MHz 	-	5725 MHz";
+
+      }
+
+      enum BAND_46_SUBBAND_D1 {
+
+        description
+
+          "46d1: 5725 MHz 	-	5850 MHz";
+
+      }
+
+      enum BAND_46_SUBBAND_D2 {
+
+        description
+
+          "46d2: 5850 MHz 	-	5925 MHz";
+
+      }
+
+    }
+
+    description
+
+      "This value indicates the list of bands supported as per the document,
+
+      3GPP TS 36.104 V14.2.0 (2016-12), 'Section 5.5 Operation bands'.";
+
+  }
+
+
+
+  grouping band-configuration {
+
+    description
+
+      "Grouping for band configuration";
+
+
+
+    leaf band-number {
+
+      type band-num;
+
+      description
+
+        "This value indicates the list of bands supported as per the document,
+
+        3GPP TS 36.104 V14.2.0 (2016-12), 'Section 5.5 Operation bands'.";
+
+    }
+
+    leaf-list channel-center-frequency {
+
+      type uint16;
+
+      units kilohertz;
+
+      description
+
+        "This value indicates carrier center frequency in KHz";
+
+    }
+
+  }
+
+
+
+  grouping measurement-parameters {
+
+    description
+
+      "Grouping for measurement parameters";
+
+
+
+    leaf duration-per-channel {
+
+      type uint16;
+
+      units milliseconds;
+
+      description
+
+        "This value indicates measurement duration per channel in milliseconds.";
+
+    }
+
+
+
+    leaf maximum-response-time {
+
+      type uint16;
+
+      units seconds;
+
+      description
+
+        "This value indicates maximum response time (i.e., timer) in seconds.";
+
+    }
+
+  }
+
+
+
+  grouping channel-result-element {
+
+    description
+
+      "Grouping for channel result element";
+
+
+
+    leaf measured-channel {
+
+      type uint16;
+
+      units kilohertz;
+
+      description
+
+        "This value indicates carrier center frequency for which the result is computed in KHz.";
+
+    }
+
+
+
+    leaf occupancy-ratio {
+
+      type uint8;
+
+      units percent;
+
+      description
+
+        "This value indicates occupancy ratio in percentage.";
+
+    }
+
+
+
+    leaf average-rssi {
+
+      type int8;
+
+      units dBm;
+
+      description
+
+        "This value indicates average RSSI in dBm";
+
+    }
+
+  }
+
+
+
+  grouping band-result-element {
+
+    description
+
+      "Grouping for band result element";
+
+
+
+    leaf band-number {
+
+      type band-num;
+
+      description
+
+        "This value indicates the band for which the result is computed.";
+
+    }
+
+
+
+    leaf measurement-success {
+
+      type boolean;
+
+      description
+
+        "This value indicates whether the measurement is successful for the given band.";
+
+    }
+
+    leaf failure-message {
+
+      when "../measurement-success='false'";
+
+      type enumeration {
+
+        enum TIMEOUT {
+
+          description "Timed out waiting for measurement completion.";
+
+        }
+
+      }
+
+      description "This value indicates the detailed error message for failure of the measurement at O-RU.";
+
+    }
+
+
+
+    list channel-result {
+
+      when "../measurement-success='true'";
+
+      key "measured-channel";
+
+      description "Results for a particular channel";
+
+
+
+      uses channel-result-element;
+
+    }
+
+  }
+
+
+
+  //rpc definitions
+
+  rpc start-measurements {
+
+    if-feature mcap:LAA;
+
+    description "Measurements for Carrier-Selection and Dynamic Frequency Selection (DFS)";
+
+    input {
+
+      list band-config {
+
+        key "band-number";
+
+        description "Per band configuration for measurements.";
+
+
+
+        uses band-configuration;
+
+      }
+
+
+
+      uses measurement-parameters;
+
+    }
+
+
+
+    output {
+
+      list band-config {
+
+        key "band-number";
+
+        description "Output list for all the bands requested for measurements.";
+
+
+
+        leaf band-number {
+
+          type band-num;
+
+          description
+
+            "This value indicates the list of bands supported as per the document,
+
+            3GPP TS 36.104 V14.2.0 (2016-12), 'Section 5.5 Operation bands'.";
+
+        }
+
+        leaf-list carrier-center-frequency {
+
+          type uint16;
+
+          units kilohertz;
+
+          description
+
+            "This value indicates carrier center frequency in KHz";
+
+        }
+
+        leaf status {
+
+          type enumeration {
+
+            enum ACCEPTED {
+
+              description "This indicates the measurements for particular sub band is accepted at O-RU.";
+
+            }
+
+            enum REJECTED {
+
+              description "This indicates the measurements for particular sub band is rejected at O-RU.";
+
+            }
+
+          }
+
+          description "This value indicates the status of the measurement acceptance at O-RU.";
+
+        }
+
+
+
+        leaf error-message {
+
+          when "../status='REJECTED'";
+
+          type string;
+
+          description
+
+            "This value indicates the detailed error message for the measurement being rejected at O-RU.";
+
+        }
+
+      }
+
+    }
+
+  }
+
+
+
+  // notifications
+
+  notification measurement-result {
+
+    if-feature mcap:LAA;
+
+    description "Notification to provide the results of carrier selection and DFS.";
+
+    list band-result {
+
+      key "band-number";
+
+      description "Results for a particular sub band under band 46.";
+
+
+
+      uses band-result-element;
+
+    }
+
+  }
+
+}
+module o-ran-ald-port {
+
+  yang-version 1.1;
+
+  namespace "urn:o-ran:ald-port:1.0";
+
+  prefix "o-ran-ald-port";
+
+
+
+  organization "O-RAN Alliance";
+
+
+
+  contact
+
+    "www.o-ran.org";
+
+
+
+  description
+
+    "This module defines the input state and output configuration for
+
+    the Antenna Line Device capability.
+
+
+
+    Copyright 2019 the O-RAN Alliance.
+
+
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS'
+
+    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+
+    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+
+    ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+
+    LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+
+    CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+
+    SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+
+    INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+
+    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+
+    POSSIBILITY OF SUCH DAMAGE.
+
+
+
+    Redistribution and use in source and binary forms, with or without
+
+    modification, are permitted provided that the following conditions are met:
+
+
+
+    * Redistributions of source code must retain the above copyright notice,
+
+    this list of conditions and the above disclaimer.
+
+    * Redistributions in binary form must reproduce the above copyright notice,
+
+    this list of conditions and the above disclaimer in the documentation
+
+    and/or other materials provided with the distribution.
+
+    * Neither the Members of the O-RAN Alliance nor the names of its
+
+    contributors may be used to endorse or promote products derived from
+
+    this software without specific prior written permission.";
+
+
+
+  revision "2019-07-03" {
+
+    description
+
+      "version 1.1.0
+
+
+
+      1) backward compatible changes to introduce groupings.";
+
+
+
+    reference "ORAN-WG4.M.0-v01.00";
+
+  }
+
+
+
+  revision "2019-02-04" {
+
+    description
+
+      "version 1.0.0
+
+
+
+      1) imported model from xRAN
+
+      2) changed namespace and reference from xran to o-ran";
+
+
+
+    reference "ORAN-WG4.M.0-v01.00";
+
+  }
+
+
+
+
+
+  feature OVERCURRENT-SUPPORTED {
+
+    description
+
+      "This feature indicates that the equipment supports the over-current notification
+
+      capability.";
+
+  }
+
+
+
+// Groupings
+
+
+
+  grouping aldport-group {
+
+    leaf over-current-supported {
+
+      type boolean;
+
+      config false;
+
+      description
+
+        "Set to TRUE when the equipment supports over curent notifications";
+
+    }
+
+
+
+    list ald-port {
+
+      key "name";
+
+
+
+      config false;
+
+
+
+      description
+
+        "Leaf nodes describing ALD Port";
+
+      leaf name {
+
+        type string {
+
+          length "1..255";
+
+        }
+
+        description
+
+          "A name that is unique that identifies a ald port instance.
+
+          This name may be used in fault management to refer to a fault source
+
+          or affected object";
+
+      }
+
+
+
+      leaf port-id {
+
+        type uint8;
+
+            config false;
+
+            mandatory true;
+
+
+
+            description
+
+          "A number which identifies an ALD Port.
+
+          The number of the Physical ALD port connector in the module.
+
+          If the module supports 2 ALD Port connectors, use 0 and 1.";
+
+      }
+
+
+
+      leaf dc-control-support{
+
+        type boolean;
+
+        config false;
+
+            mandatory true;
+
+
+
+            description
+
+          "It is shown that on/off in the DC power supply is possible.
+
+          In case of False, power supply is always on.";
+
+      }
+
+
+
+      leaf dc-enabled-status {
+
+        when "../dc-control-support = 'true'";
+
+        type boolean;
+
+        default false;
+
+        description
+
+          "Status of DC voltage enabled on antenna line.
+
+          Valid only in case dc-control-support is true.";
+
+      }
+
+
+
+      leaf supported-connector{
+
+        type enumeration {
+
+              enum ANTENNA_CONNECTOR {
+
+                description
+
+                    "This ald port is related to antenna connector";
+
+              }
+
+              enum RS485_PORT {
+
+                description
+
+                    "This ald port is related to RS485 port";
+
+              }
+
+            }
+
+        config false;
+
+            mandatory true;
+
+
+
+            description
+
+          "Informs about the connectors of Module which ALDs are connected to.
+
+          This value is depending on HW design.";
+
+      }
+
+    }
+
+
+
+    list ald-port-dc-control {
+
+      key "name";
+
+
+
+      description
+
+        "Container needed to manage DC on ALD ports";
+
+
+
+      leaf name {
+
+        type leafref {
+
+          path "/ald-ports-io/ald-port/name";
+
+          require-instance false;
+
+        }
+
+        mandatory true;
+
+
+
+        description
+
+          "Name derived from unmodifiable list ald-port";
+
+      }
+
+
+
+      leaf dc-enabled{
+
+        type boolean;
+
+
+
+        description
+
+          "If dc-control-support is true case, this leaf is effective.
+
+          If dc-control-support is not true this leaf makes no action
+
+          In case of true, the power supply shall be turned on.";
+
+      }
+
+    }
+
+  }
+
+
+
+  grouping overcurrent-group {
+
+    container overload-condition {
+
+      description
+
+        "Container used in notification";
+
+
+
+      leaf-list overloaded-ports {
+
+        type leafref {
+
+          path "/ald-ports-io/ald-port/name";
+
+        }
+
+        description
+
+          "List of overloaded ports";
+
+      }
+
+    }
+
+  }
+
+
+
+  grouping dc-enabled-group {
+
+    list ald-port {
+
+      key name;
+
+      description
+
+        "list of ald-ports that has its dc-enabled-status changed";
+
+      leaf name{
+
+        type leafref {
+
+          path "/ald-ports-io/ald-port/name";
+
+        }
+
+        description "Name of port which has changed";
+
+      }
+
+      leaf dc-enabled-status{
+
+        type leafref {
+
+          path "/ald-ports-io/ald-port/dc-enabled-status";
+
+        }
+
+        description "New staus of dc-enabled-status";
+
+      }
+
+    }
+
+  }
+
+
+
+// Top Level Container
+
+
+
+  container ald-ports-io {
+
+    description
+
+      "ALD port information.
+
+       ALD port of the equipment that can be used to connect External Equipment (Antenna Line Devices).
+
+       Communication uses AISG over HDLC.
+
+       Physical connection depends on connector type offered by the port (RS-485 or antenna line)
+
+       Note: Single instance of ALD Port can point to more than one antenna line devices.";
+
+
+
+    uses aldport-group;
+
+  }
+
+
+
+  notification overcurrent-report {
+
+    if-feature OVERCURRENT-SUPPORTED;
+
+
+
+    description
+
+      "The equipment is able to report overcurrent condition about Port.
+
+      This function is depending on HW design.
+
+      The notification depend on power consumption which connected ALD devices and module.";
+
+
+
+    uses overcurrent-group;
+
+  }
+
+
+
+  notification dc-enabled-status-change {
+
+    description
+
+      "The equipment is able to report the change of 'dc-enabled-status' of the ald-port.
+
+      This is applicable when the leaf 'dc-control-support' of the ald-pot is 'TRUE'.";
+
+
+
+    uses dc-enabled-group;
+
+  }
+
+}
+module o-ran-externalio {
+
+  yang-version 1.1;
+
+  namespace "urn:o-ran:external-io:1.0";
+
+  prefix "o-ran-io";
+
+
+
+  organization "O-RAN Alliance";
+
+
+
+  contact
+
+    "www.o-ran.org";
+
+
+
+  description
+
+    "This module defines the input state and output configuration for
+
+    external IO.
+
+
+
+    Copyright 2019 the O-RAN Alliance.
+
+
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS'
+
+    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+
+    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+
+    ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+
+    LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+
+    CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+
+    SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+
+    INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+
+    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+
+    POSSIBILITY OF SUCH DAMAGE.
+
+
+
+    Redistribution and use in source and binary forms, with or without
+
+    modification, are permitted provided that the following conditions are met:
+
+
+
+    * Redistributions of source code must retain the above copyright notice,
+
+    this list of conditions and the above disclaimer.
+
+    * Redistributions in binary form must reproduce the above copyright notice,
+
+    this list of conditions and the above disclaimer in the documentation
+
+    and/or other materials provided with the distribution.
+
+    * Neither the Members of the O-RAN Alliance nor the names of its
+
+    contributors may be used to endorse or promote products derived from
+
+    this software without specific prior written permission.";
+
+
+
+  revision "2019-07-03" {
+
+    description
+
+      "version 1.1.0
+
+
+
+      1) backward compatible changes to introduce groupings.";
+
+
+
+    reference "ORAN-WG4.M.0-v01.00";
+
+  }
+
+
+
+  revision "2019-02-04" {
+
+    description
+
+      "version 1.0.0
+
+
+
+      1) imported model from xRAN
+
+      2) changed namespace and reference from xran to o-ran";
+
+
+
+    reference "ORAN-WG4.M.0-v01.00";
+
+  }
+
+
+
+  grouping external-io-group {
+
+    list input {
+
+      key "name";
+
+      config false;
+
+      description
+
+        "Leaf nodes describing external line inputs";
+
+      leaf name {
+
+        type string {
+
+          length "1..255";
+
+        }
+
+        description
+
+        "A unique name that identifies an input port instance.
+
+        This name may be used in fault management to refer to a fault source
+
+        or affected object";
+
+      }
+
+      leaf port-in {
+
+        type uint8;
+
+        description
+
+          "A number which identifies an external input port.";
+
+      }
+
+
+
+      leaf line-in {
+
+        type boolean;
+
+        default true;
+
+        description
+
+          "Value TRUE indicates that circuit is open.
+
+           Value FALSE indicates that circuit is closed.
+
+
+
+           Usually when nothing is connected to the line the value is TRUE.
+
+           The details of external line-in implementation are HW specific.";
+
+      }
+
+    }
+
+
+
+    list output {
+
+      key "name";
+
+      config false;
+
+      description
+
+        "Leaf nodes describing external line outputs";
+
+      leaf name {
+
+        type string {
+
+          length "1..255";
+
+        }
+
+        description
+
+          "A name that is unique that identifies an output port instance.
+
+          This name may be used in fault management to refer to a fault source
+
+          or affected object";
+
+      }
+
+      leaf port-out {
+
+        type uint8;
+
+        mandatory true;
+
+        description
+
+          "A number which identifies an external output port.";
+
+      }
+
+    }
+
+
+
+    list output-setting {
+
+      key "name";
+
+
+
+      description
+
+        "List allowing to set output line state";
+
+
+
+      leaf name {
+
+        type leafref {
+
+          path "/external-io/output/name";
+
+          require-instance false;
+
+        }
+
+        mandatory true;
+
+
+
+        description
+
+          "Name derived from unmodifiable list external-io";
+
+      }
+
+
+
+      leaf line-out {
+
+        type boolean;
+
+        default true;
+
+        description
+
+          "Value TRUE indicates that circuit is in its natural state.
+
+           Value FALSE indicates that circuit is not in its natural state.";
+
+      }
+
+    }
+
+  }
+
+
+
+  grouping notification-group {
+
+    container current-input-notification {
+
+      description "a container for the state of the input ports";
+
+      list external-input {
+
+        key "name";
+
+        description "a list of the input ports and their state";
+
+        leaf name{
+
+          type leafref{
+
+            path "/external-io/input/name";
+
+          }
+
+          description "the name of the ald-port";
+
+        }
+
+        leaf io-port {
+
+          type leafref{
+
+            path  "/external-io/input/port-in";
+
+          }
+
+          description "the external input port";
+
+        }
+
+        leaf line-in {
+
+          type leafref{
+
+            path  "/external-io/input/line-in";
+
+          }
+
+          description "the state of the external input port";
+
+        }
+
+      }
+
+    }
+
+  }
+
+
+
+// Top Level Container
+
+
+
+  container external-io {
+
+    description
+
+      "External IO information.";
+
+    uses external-io-group;
+
+  }
+
+
+
+  notification external-input-change {
+
+    description
+
+      "Notification used to indicate that external line input has changed state";
+
+    uses notification-group;
+
+  }
+
+}
+module o-ran-mplane-int {
+
+  yang-version 1.1;
+
+  namespace "urn:o-ran:mplane-interfaces:1.0";
+
+  prefix "o-ran-mplane-int";
+
+
+
+  import ietf-inet-types {
+
+    prefix "inet";
+
+  }
+
+
+
+  import ietf-interfaces {
+
+    prefix "if";
+
+  }
+
+
+
+  import o-ran-interfaces {
+
+    prefix "o-ran-int";
+
+  }
+
+
+
+  organization "O-RAN Alliance";
+
+
+
+  contact
+
+    "www.o-ran.org";
+
+
+
+  description
+
+    "This module defines the YANG definitions for managng the O-RAN Radio Unit
+
+     management plane interface.
+
+
+
+     Copyright 2019 the O-RAN Alliance.
+
+
+
+     THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS'
+
+     AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+
+     IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+
+     ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+
+     LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+
+     CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+
+     SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+
+     INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+
+     CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+
+     ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+
+     POSSIBILITY OF SUCH DAMAGE.
+
+
+
+     Redistribution and use in source and binary forms, with or without
+
+     modification, are permitted provided that the following conditions are met:
+
+
+
+     * Redistributions of source code must retain the above copyright notice,
+
+     this list of conditions and the above disclaimer.
+
+     * Redistributions in binary form must reproduce the above copyright notice,
+
+     this list of conditions and the above disclaimer in the documentation
+
+     and/or other materials provided with the distribution.
+
+     * Neither the Members of the O-RAN Alliance nor the names of its
+
+     contributors may be used to endorse or promote products derived from
+
+     this software without specific prior written permission.";
+
+
+
+  revision "2019-07-03" {
+
+       description
+
+         "version 1.1.0
+
+
+
+         1) enabling NETCONF clients to be configured.
+
+         2) shifting new container to correct position
+
+         3) backward compatible changes to introduce groupings";
+
+
+
+       reference "ORAN-WG4.M.0-v01.00";
+
+  }
+
+
+
+  revision "2019-02-04" {
+
+    description
+
+      "version 1.0.0
+
+
+
+      1) imported model from xRAN
+
+      2) changed namespace and reference from xran to o-ran";
+
+
+
+    reference "ORAN-WG4.M.0-v01.00";
+
+  }
+
+
+
+
+
+  typedef vlan-id {
+
+    type uint16 {
+
+      range 1..4094;
+
+    }
+
+    description
+
+      "Type definition representing a single-tagged VLAN";
+
+  }
+
+
+
+  // Groupings
+
+
+
+  grouping mplane-group {
+
+    container searchable-mplane-access-vlans-info {
+
+      description
+
+        "These parameters shall be stored by the equipment in reset persistant memory
+
+        to enable it to be re-used to optimize VALN discovery procerdures.";
+
+      leaf-list searchable-access-vlans {
+
+        type vlan-id;
+
+        description
+
+          "A list of access VLANs that may be operational on the transport
+
+          network. Can be used by the equipment to optimize its VLAN searching - for
+
+          M-plane operations.";
+
+      }
+
+      container vlan-range {
+
+        description "the range of VLAN IDs that may be configured for M-Plane";
+
+        leaf lowest-vlan-id {
+
+          type vlan-id;
+
+          description
+
+            "Value of this parameter informs equipment about lowest VID to be used
+
+            in VLAN scan procedure";
+
+        }
+
+        leaf highest-vlan-id {
+
+          type vlan-id;
+
+          description
+
+            "Value of this parameter informs about highest VID to be used
+
+            in VLAN scan procedure";
+
+        }
+
+      }
+
+    }
+
+
+
+    container m-plane-interfaces {
+
+      description "information concerning m-plane interfaces";
+
+      list m-plane-sub-interfaces {
+
+        key "interface-name sub-interface";
+
+        description "list of m-plane information";
+
+        leaf interface-name {
+
+          type leafref {
+
+            path "/if:interfaces/if:interface/if:name";
+
+          }
+
+          description "the name of the interface";
+
+        }
+
+        leaf sub-interface {
+
+          type leafref {
+
+            path "/if:interfaces/if:interface[if:name = current()/../interface-name]/o-ran-int:vlan-id";
+
+          }
+
+          description
+
+            "vlans used to communicate with management plane servers.";
+
+        }
+
+        container client-info {
+
+          config false;
+
+          description
+
+            "the NETCONF client information, discovered by DHCP or manually
+
+             configured during installation.";
+
+          list mplane-ipv4-info {
+
+            key mplane-ipv4;
+
+            description "list of IPv4 NETCONF clients";
+
+            leaf mplane-ipv4 {
+
+              type inet:ipv4-address;
+
+              description "The IPv4 address of M-Plane client discovered by the O-RU
+
+              or manually configured.";
+
+            }
+
+            leaf port {
+
+              type inet:port-number;
+
+              description
+
+                "The call home port number discovered or manually configured.";
+
+            }
+
+          }
+
+          list mplane-ipv6-info {
+
+            key mplane-ipv6;
+
+            description "list of IPv6 NETCONF clients";
+
+            leaf mplane-ipv6 {
+
+              type inet:ipv6-address;
+
+              description "The IPv6 address of M-Plane client discovered by the O-RU
+
+              or manually configured.";
+
+            }
+
+            leaf port {
+
+              type inet:port-number;
+
+              description
+
+                "The call home port number discovered or manually configured.";
+
+            }
+
+          }
+
+          leaf-list mplane-fqdn {
+
+            type inet:domain-name;
+
+            description "The discovered FQDN(s) of M-Plane client(s).";
+
+          }
+
+        }
+
+      }
+
+
+
+      container m-plane-ssh-ports {
+
+        description "leafs for managing SSH ports";
+
+        leaf call-home-ssh-port {
+
+          type inet:port-number;
+
+          default 4334;
+
+          description "The configured call home server port number";
+
+        }
+
+        leaf server-ssh-port {
+
+          type inet:port-number;
+
+          default 830;
+
+          description "The configured SSH server port number";
+
+        }
+
+      }
+
+    }
+
+    container configured-client-info {
+
+      description
+
+        "the NETCONF client information that may be configured by another
+
+        NETCONF client. These clients are reported independently from clients
+
+        manually configured or discovered using DHCP.";
+
+      list mplane-ipv4-info {
+
+        key mplane-ipv4;
+
+        description "list of IPv4 NETCONF clients";
+
+        leaf mplane-ipv4 {
+
+          type inet:ipv4-address;
+
+          description "The IPv4 address of configured M-Plane client.";
+
+        }
+
+        leaf port {
+
+          type inet:port-number;
+
+          description
+
+            "The configured call home port number.";
+
+        }
+
+      }
+
+      list mplane-ipv6-info {
+
+        key mplane-ipv6;
+
+        description "list of IPv6 NETCONF clients";
+
+        leaf mplane-ipv6 {
+
+          type inet:ipv6-address;
+
+          description "The IPv6 address of configured M-Plane client..";
+
+        }
+
+        leaf port {
+
+          type inet:port-number;
+
+          description
+
+            "The configured call home port number.";
+
+        }
+
+      }
+
+      leaf-list mplane-fqdn {
+
+        type inet:domain-name;
+
+        description "The configured FQDN(s) of M-Plane client(s).";
+
+      }
+
+    }
+
+  }
+
+
+
+
+
+  // Top Level Container
+
+
+
+  container mplane-info {
+
+    description "top level container for management plane information";
+
+
+
+    uses mplane-group;
+
+  }
+
+}

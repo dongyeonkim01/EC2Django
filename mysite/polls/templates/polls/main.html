@@ -1,22 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 <body>
 
-    <form action="/fileUp" method="get">
-        <input type="submit" value="파일 올리기">
-    </form>
+<div class="container">
+  <div class="jumbotron">
+    <h1>Yang Viewer </h1>
+    <p>Test Page Yang Viewer </p>
+  </div>
+  <div class="row">
+    <div class="col-sm-4">
+      <h3>파일 업로드</h3>
+      <p>사용할 Yang Data를 업로드 합니다. (yang 확장자 data만 사용 가능)</p>
+      <p><form action="/fileUp" method="get">
+        <input type="submit" value="이동하기">
+    </form></p>
+    </div>
+    <div class="col-sm-4">
+      <h3>결과 확인</h3>
+      <p>Yang Viewer 파일을 확인합니다. </p>
+      <p><form action="http://13.124.100.89/data/"  method="get">
+        <input type="submit" value="이동하기">
+    </form></p>
+    </div>
+    <div class="col-sm-4">
+      <h3>Column 3</h3>
+      <p>Test Page</p>
+      <p><form action="/test" method="get">
+        <input type="hidden" value="테스트 " >
+    </form></p>
+    </div>
+  </div>
+</div>
 
-    <form action="http://13.124.100.89/data/"  method="get">
-        <input type="submit" value="nginx">
-    </form>
-
-    <div style="height:150px;"></div>
-
-    <form action="/test" method="get">
-        <input type="submit" value="테스트 ">
-    </form>
 </body>
 </html>

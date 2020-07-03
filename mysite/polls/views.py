@@ -15,6 +15,7 @@ def fileUpPage(request):
     return render(request,"polls/fileup.html")
 
 def upload(request):
+    filename ='view'
     for count,x in enumerate(request.FILES.getlist('files')):
         def process(f):
             with open('/home/ec2-user/django/EC2Django/mysite/Files/data/{}'.format(str(x)), 'wb+') as destination:
@@ -26,23 +27,27 @@ def upload(request):
     file_list = file_list.split('\n')
 
     total_Yang = ''
-    print(file_list)
+    print()
+    print()
+    print()
+    print('----------------------------------')
+    print('file up load/converting')
     for file in file_list:
-        kk = ''
+        name1 = file.split('/')
+        filename+='_'+name1[-1].split('.')[0]
         try:
-            with open(file.replace(' ','') ,'r') as ff:
-                kk += ff.readlines()
+            with open(str(file.replace(' ','')) ,'r') as ff:
+                kk = ff.readlines()
             total_Yang += '\n'.join(kk)
         except:
-            print('error')
+            print('error read file')
             pass
     with open('tmp.yang','w') as ft:
         ft.write(total_Yang)
 
-    time.sleep(3)
-
     os.system('pyang -f jstree -o {}  {}'.format('/home/ec2-user/django/EC2Django/mysite/Files/result/out.html'
-                                           , ' '.join(file_list)))
+                                           , '  '.join(file_list)))
+    time.sleep(2)
 
     A = YangRegex.regexClass('tmp.yang')
     dic = A.leaf_dicOut()
@@ -50,9 +55,13 @@ def upload(request):
     out = B.finalFile(dic)
 
 
-    with open('/home/ec2-user/django/EC2Django/mysite/Files/result/{}.html'.format('ttt1'), 'w') as fi:
+    with open('/home/ec2-user/django/EC2Django/mysite/Files/result/{}.html'.format(filename), 'w') as fi:
         fi.write(out)
+
+    os.system('mv  /home/ec2-user/django/EC2Django/mysite/Files/result/{}.html   /home/ec2-user/data'.format(filename))
     print('-----------------------------')
+
+
 
     return render(request,"polls/uploadResult.html" ,{"data":file_list})
 
