@@ -152,13 +152,11 @@ class regexClass():
             if 'class="leaf"' in i or 'class="leaf-list' in i:
                 bool = True
             if bool:
-                text2 = text2 + ' ' + i
+                text2 = text2 + i
 
             if '</abbr>' in i and bool:
-                text2 = text2.split('\n')[1:]
-                text2 = '\n'.join(text2)
                 bool = False
-                lli = patten.findall(text2.replace('\n', ' '))
+                lli = patten.findall(text2)
                 ind2 = 0
                 for ind, val in enumerate(lli):
                     if '">' in val:
