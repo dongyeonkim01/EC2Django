@@ -34,7 +34,7 @@ def upload(request):
     print('file up load/converting')
     for file in file_list:
         name1 = file.split('/')
-        filename+='-'+name1[-1].split('.')[0]
+        filename+='_'+name1[-1].split('.')[0]
         try:
             with open(str(file.replace(' ','')) ,'r') as ff:
                 kk = ff.readlines()
